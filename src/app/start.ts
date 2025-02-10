@@ -1,3 +1,3 @@
-import { App } from './console/console';
+import { App } from './console/app';
 
 new App().start();
