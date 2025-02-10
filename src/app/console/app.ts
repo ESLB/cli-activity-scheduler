@@ -1,4 +1,4 @@
-import yargs, { ArgumentsCamelCase, Argv, CommandModule } from 'yargs';
+import yargs, { ArgumentsCamelCase, Argv, command, CommandModule } from 'yargs';
 import readline from 'readline';
 import { commands } from './commands';
 
@@ -30,8 +30,7 @@ export class App {
 
   private setCommands(commands: CommandModule[]) {
     commands.forEach((c) => {
-      injectCircuiteBreaker(c, this.circuitBreaker);
-      this.yarg.command(c);
+      this.yarg.command(injectCircuiteBreaker(c, this.circuitBreaker));
     });
   }
 
@@ -76,8 +75,13 @@ export const injectCircuiteBreaker = (
   commandModule: CommandModule,
   circuiteBreaker: CircuiteBreaker,
 ) => {
-  commandModule.handler = (argv: ArgumentsCamelCase) => {
+  const { handler, ...others } = commandModule;
+  const injectedHandler = (argv: ArgumentsCamelCase) => {
     if (!circuiteBreaker.continue) return;
     commandModule.handler(argv);
+  };
+  return {
+    ...others,
+    handler: injectedHandler,
   };
 };
