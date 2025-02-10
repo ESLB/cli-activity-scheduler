@@ -1,4 +1,3 @@
-import { startREPL } from './console/console';
+import { App } from './console/console';
 
-console.log('Welcome to the REPL! Type "exit" to quit.');
-startREPL();
+new App().start();

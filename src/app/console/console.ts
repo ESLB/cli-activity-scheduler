@@ -1,50 +1,64 @@
-import yargs, { exitProcess } from 'yargs';
+import yargs, { Argv } from 'yargs';
 import readline from 'readline';
 import { CommandInjector } from './commands';
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+export class App {
+  private readonly lineReader;
+  private readonly circuitBreaker = { continue: true, showErrorMessage: true };
+  private readonly yarg: Argv;
 
-let circuitBreaker = { continue: true, showErrorMessage: true };
-
-const yarg = yargs().fail((msg, err, yargs) => {
-  if (circuitBreaker.showErrorMessage) {
-    console.log(yargs.help());
-    console.log(msg);
+  constructor() {
+    this.lineReader = readline
+      .createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      })
+      .on('close', () => {
+        console.log('Goodbye!');
+        process.exit(0);
+      });
+    this.yarg = yargs();
+    this.setCommands();
+    this.setFailureHandler();
   }
-  circuitBreaker.showErrorMessage = false;
-  circuitBreaker.continue = false;
-});
 
-new CommandInjector(circuitBreaker).execute(yarg);
+  private setCommands() {
+    new CommandInjector(this.circuitBreaker).execute(this.yarg);
+  }
 
-function executeCommand(input: string) {
-  yarg.parse(input.trim().split(' '));
+  public start(): void {
+    console.log('Welcome to the REPL! Type "exit" to quit.');
+    this.promp();
+  }
+
+  private setFailureHandler() {
+    this.yarg.fail((msg, err, yargs) => {
+      if (this.circuitBreaker.showErrorMessage) {
+        console.log(yargs.help());
+        console.log(msg);
+      }
+      this.circuitBreaker.showErrorMessage = false;
+      this.circuitBreaker.continue = false;
+    });
+  }
+
+  private promp() {
+    this.lineReader.question('> ', (input) => {
+      if (input.toLowerCase() === 'exit') {
+        return this.lineReader.close();
+      }
+      this.executeCommand(input);
+      this.promp();
+    });
+  }
+
+  private executeCommand(input: string) {
+    this.yarg.parse(input.trim().split(' '));
+    this.resetCircuitBreaker();
+  }
+
+  private resetCircuitBreaker() {
+    this.circuitBreaker.continue = true;
+    this.circuitBreaker.showErrorMessage = true;
+  }
 }
-
-const resetCircuitBreaker = () => {
-  circuitBreaker.continue = true;
-  circuitBreaker.showErrorMessage = true;
-};
-
-const promp = () => {
-  rl.question('> ', (input) => {
-    if (input.toLowerCase() === 'exit') {
-      return rl.close();
-    }
-    executeCommand(input);
-    resetCircuitBreaker();
-    promp();
-  });
-};
-
-export function startREPL() {
-  promp();
-}
-
-rl.on('close', () => {
-  console.log('Goodbye!');
-  process.exit(0);
-});
