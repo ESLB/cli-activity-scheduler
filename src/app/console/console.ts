@@ -9,42 +9,39 @@ const rl = readline.createInterface({
 
 let circuitBreaker = { continue: true, showErrorMessage: true };
 
-const yarg = yargs()
-  .fail((msg, err, yargs) => {
-    // Just don't throw
-    if (circuitBreaker.showErrorMessage) {
-      console.log(yargs.help());
-      console.log(msg);
-    }
-    circuitBreaker.showErrorMessage = false;
-    circuitBreaker.continue = false;
-  })
-  .help();
+const yarg = yargs().fail((msg, err, yargs) => {
+  if (circuitBreaker.showErrorMessage) {
+    console.log(yargs.help());
+    console.log(msg);
+  }
+  circuitBreaker.showErrorMessage = false;
+  circuitBreaker.continue = false;
+});
 
-new CommandInjector(circuitBreaker, yarg).execute(yarg);
-
-// addCommands(yarg, circuitBreaker);
+new CommandInjector(circuitBreaker).execute(yarg);
 
 function executeCommand(input: string) {
-  yarg.parse(input.split(' ').filter((i) => i !== ''));
+  yarg.parse(input.trim().split(' '));
 }
 
-export function startREPL() {
+const resetCircuitBreaker = () => {
+  circuitBreaker.continue = true;
+  circuitBreaker.showErrorMessage = true;
+};
+
+const promp = () => {
   rl.question('> ', (input) => {
     if (input.toLowerCase() === 'exit') {
-      rl.close();
-      return;
+      return rl.close();
     }
-    try {
-      executeCommand(input);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      circuitBreaker.continue = true;
-      circuitBreaker.showErrorMessage = true;
-      startREPL();
-    }
+    executeCommand(input);
+    resetCircuitBreaker();
+    promp();
   });
+};
+
+export function startREPL() {
+  promp();
 }
 
 rl.on('close', () => {

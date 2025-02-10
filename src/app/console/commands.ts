@@ -3,10 +3,7 @@ import yargs, { ArgumentsCamelCase, Argv, CommandModule } from 'yargs';
 export const commands: CommandModule[] = [];
 
 export class CommandInjector {
-  constructor(
-    private readonly circuiteBreaker: { continue: boolean },
-    private readonly yarg: Argv,
-  ) {}
+  constructor(private readonly circuiteBreaker: { continue: boolean }) {}
   greeting: CommandModule = {
     command: 'greet <name>',
     describe: 'Greet the user',
@@ -20,11 +17,8 @@ export class CommandInjector {
     },
     handler: (argv: ArgumentsCamelCase) => {
       if (!this.circuiteBreaker.continue) {
-        // console.log('inside');
-        // console.log(this.yarg.help());
         return;
       }
-      // console.log('outside');
       console.log(`< Hola ${argv.name}`);
     },
   };
