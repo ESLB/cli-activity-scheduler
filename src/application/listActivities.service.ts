@@ -4,6 +4,6 @@ export class ListActivitiesService {
   constructor(private readonly activityRepository: ActivityRepository) {}
 
   execute() {
-    console.log(this.activityRepository.getActivities({ current: false }));
+    return this.activityRepository.getActivities({ current: false });
   }
 }

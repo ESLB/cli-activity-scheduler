@@ -1,20 +1,26 @@
 import { CommandModule, ArgumentsCamelCase } from 'yargs';
+import { ActivityTextRepository } from '../../infrastructure/repository/activityText.repository';
+import { ListActivitiesService } from '../../application/listActivities.service';
+
+const activityTextRepository = new ActivityTextRepository();
+const listActivities = new ListActivitiesService(activityTextRepository);
 
 export const commands: CommandModule[] = [];
 
-const greeting = {
-  command: 'greet <name>',
-  describe: 'Greet the user',
-  builder: {
-    name: {
-      describe: 'Your name',
-      demandOption: true,
-      requiresArg: true,
-      type: 'string',
-    },
+const list = {
+  command: 'list',
+  describe: 'List activities',
+  handler: () => {
+    const activities = listActivities.execute();
+    console.log(JSON.stringify(activities, null, 2));
   },
+} satisfies CommandModule;
+
+const greeting = {
+  command: 'hi',
+  describe: 'Greet the user',
   handler: (argv: ArgumentsCamelCase) => {
-    console.log(`< Hola ${argv.name}`);
+    console.log(`< Hola, ¿qué desea hacer hoy?`);
   },
 } satisfies CommandModule;
 
@@ -56,4 +62,4 @@ const defaultCommand = {
   },
 } satisfies CommandModule;
 
-commands.push(greeting, add, clear, defaultCommand);
+commands.push(greeting, add, clear, defaultCommand, list);
