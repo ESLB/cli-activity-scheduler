@@ -1,9 +1,9 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { input } from '@inquirer/prompts';
-import { CreateActivityService } from './application/createActivity.service';
-import { ListActivitiesService } from './application/listActivities.service';
-import { ActivityTextRepository } from './infrastructure/repository/activityText.repository';
+import { CreateActivityService } from './contexts/scheduler/application/createActivity.service';
+import { ListActivitiesService } from './contexts/scheduler/application/listActivities.service';
+import { ActivityTextRepository } from './contexts/scheduler/infrastructure/repository/activityText.repository';
 
 const activityTextRepository = new ActivityTextRepository();
 const listActivities = new ListActivitiesService(activityTextRepository);

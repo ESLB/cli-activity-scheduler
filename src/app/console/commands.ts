@@ -1,6 +1,6 @@
 import { CommandModule, ArgumentsCamelCase } from 'yargs';
-import { ActivityTextRepository } from '../../infrastructure/repository/activityText.repository';
-import { ListActivitiesService } from '../../application/listActivities.service';
+import { ActivityTextRepository } from '../../contexts/scheduler/infrastructure/repository/activityText.repository';
+import { ListActivitiesService } from '../../contexts/scheduler/application/listActivities.service';
 
 const activityTextRepository = new ActivityTextRepository();
 const listActivities = new ListActivitiesService(activityTextRepository);
