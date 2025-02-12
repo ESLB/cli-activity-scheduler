@@ -1,2 +1,4 @@
 /node_modules
-src/infrastructure/repository/data.json
+src/contexts/scheduler/infrastructure/repository/data.json
+/dist
+eslint.config.js
