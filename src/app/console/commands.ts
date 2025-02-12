@@ -1,17 +1,19 @@
 import { CommandModule, ArgumentsCamelCase } from 'yargs';
 import { ActivityTextRepository } from '../../contexts/scheduler/infrastructure/repository/activityText.repository';
 import { ListActivitiesService } from '../../contexts/scheduler/application/listActivities.service';
+import { CreateActivityService } from '../../contexts/scheduler/application/createActivity.service';
 
 const activityTextRepository = new ActivityTextRepository();
-const listActivities = new ListActivitiesService(activityTextRepository);
+const listActivitiesService = new ListActivitiesService(activityTextRepository);
+const createActivityService = new CreateActivityService(activityTextRepository);
 
 export const commands: CommandModule[] = [];
 
-const list = {
+const listActivitiesCommand = {
   command: 'list',
   describe: 'List activities',
   handler: () => {
-    const activities = listActivities.execute();
+    const activities = listActivitiesService.execute().map((i) => i.values);
     console.log(JSON.stringify(activities, null, 2));
   },
 } satisfies CommandModule;
@@ -21,6 +23,50 @@ const greeting = {
   describe: 'Greet the user',
   handler: (argv: ArgumentsCamelCase) => {
     console.log(`< Hola, ¿qué desea hacer hoy?`);
+  },
+} satisfies CommandModule;
+
+const createActivityCommand = {
+  command: 'create',
+  describe: 'Create activity',
+  builder: {
+    name: {
+      alias: 'n',
+      describe: 'First number',
+      demandOption: true,
+      type: 'string',
+    },
+    duration: {
+      alias: 'd',
+      describe: 'Second number',
+      demandOption: true,
+      type: 'number',
+    },
+    rest: {
+      alias: 'r',
+      describe: 'Second number',
+      demandOption: true,
+      type: 'boolean',
+    },
+  },
+  handler: (argv: ArgumentsCamelCase) => {
+    const name = argv.name as string;
+    const duration = argv.duration as number;
+    const rest = argv.rest as boolean;
+
+    console.log({
+      name,
+      duration,
+      doesNeedRestAfter: rest,
+    });
+
+    createActivityService.execute({
+      name,
+      duration,
+      doesNeedRestAfter: rest,
+    });
+
+    console.log('Creado correctamente');
   },
 } satisfies CommandModule;
 
@@ -62,4 +108,11 @@ const defaultCommand = {
   },
 } satisfies CommandModule;
 
-commands.push(greeting, add, clear, defaultCommand, list);
+commands.push(
+  greeting,
+  add,
+  clear,
+  defaultCommand,
+  listActivitiesCommand,
+  createActivityCommand,
+);
