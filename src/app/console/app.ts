@@ -1,6 +1,7 @@
 import yargs, { ArgumentsCamelCase, Argv, command, CommandModule } from 'yargs';
 import readline from 'readline';
 import { commands } from './commands';
+import { parse } from 'shell-quote';
 
 export type CircuiteBreaker = { continue: boolean; showErrorMessage: boolean };
 
@@ -56,7 +57,8 @@ export class App {
   }
 
   private executeCommand(input: string) {
-    this.yarg.parse(input.trim().split(' '));
+    const args = parse(input);
+    this.yarg.parse(args.map((i) => i.toString()));
     this.resetCircuitBreaker();
   }
 
