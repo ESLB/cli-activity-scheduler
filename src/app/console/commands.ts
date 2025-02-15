@@ -127,8 +127,7 @@ const setDependencyCommand = {
     );
 
     console.log('Dependency set correctly');
-
-    console.log({ t_id, p_id });
+    // TODO: Tal vez añadir el nombre de las tareas, o un resumen de la relación creada, feedback visual
   },
 } satisfies CommandModule;
 

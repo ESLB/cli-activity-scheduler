@@ -103,6 +103,12 @@ export class ActivityTextRepository implements ActivityRepository {
 
   private getActivitiesJSON(query: GetActivitiesQuery): ActivityPrimitivies[] {
     const raw = fs.readFileSync(this.filePath, 'utf-8');
-    return JSON.parse(raw) as ActivityPrimitivies[];
+    const primitiveActivities = JSON.parse(raw) as ActivityPrimitivies[];
+    primitiveActivities.forEach((i) => {
+      if (i.predecessors === undefined || i.predecessors === null) {
+        i.predecessors = [];
+      }
+    });
+    return primitiveActivities;
   }
 }
