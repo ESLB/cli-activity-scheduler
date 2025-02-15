@@ -6,11 +6,13 @@ import { PatchActivityService } from '../../contexts/scheduler/application/patch
 import { GetMatchingIdsService } from '../../contexts/scheduler/application/getMatchingIds.service';
 import { IdTextRepository } from '../../contexts/scheduler/infrastructure/repository/idText.repository';
 import type { Completer } from 'readline';
+import { GetActivityById } from '../../contexts/scheduler/application/getActivityById.service';
 
 const activityTextRepository = new ActivityTextRepository();
 const listActivitiesService = new ListActivitiesService(activityTextRepository);
 const createActivityService = new CreateActivityService(activityTextRepository);
 const patchActivityService = new PatchActivityService(activityTextRepository);
+const findActivityService = new GetActivityById(activityTextRepository);
 const idTextRepository = new IdTextRepository();
 const getMatchingIdsService = new GetMatchingIdsService(idTextRepository);
 export const customCompleter: Completer = (line) => {
@@ -26,6 +28,27 @@ const listActivitiesCommand = {
   handler: () => {
     const activities = listActivitiesService.execute().map((i) => i.values);
     console.log(JSON.stringify(activities, null, 2));
+  },
+} satisfies CommandModule;
+
+const findActivityCommand = {
+  command: 'find',
+  describe: 'Find activity by Id',
+  builder: {
+    id: {
+      describe: 'Id',
+      type: 'string',
+      demandOption: true,
+    },
+  },
+  handler: (argv: ArgumentsCamelCase) => {
+    const id = argv.id as string;
+
+    console.log({
+      id,
+    });
+
+    console.log(findActivityService.execute(id).values);
   },
 } satisfies CommandModule;
 
@@ -101,26 +124,17 @@ const patchActivityCommand = {
     },
   },
   handler: (argv: ArgumentsCamelCase) => {
-    const name = argv.n as string;
     const id = argv.id as string;
-    const duration = argv.d as number;
-    const rest = argv.r as boolean;
 
     console.log({
-      name,
-      duration,
-      doesNeedRestAfter: rest,
       id,
     });
 
     patchActivityService.execute({
       id,
-      name,
-      duration,
-      doesNeedRestAfter: rest,
     });
 
-    console.log('Creado correctamente');
+    console.log('Actualizado correctamente');
   },
 } satisfies CommandModule;
 
@@ -170,4 +184,5 @@ commands.push(
   listActivitiesCommand,
   createActivityCommand,
   patchActivityCommand,
+  findActivityCommand,
 );

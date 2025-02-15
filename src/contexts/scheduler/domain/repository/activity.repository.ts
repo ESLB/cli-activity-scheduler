@@ -2,7 +2,8 @@ import { Activity } from '../entity/activity.entity';
 import { IdValueObject } from '../valueObject/id.valueObject';
 
 export interface GetActivitiesQuery {
-  current: boolean | undefined;
+  current?: boolean | undefined;
+  id?: IdValueObject;
 }
 
 export interface ActivityRepository {

@@ -13,13 +13,31 @@ import { IdValueObject } from '../../domain/valueObject/id.valueObject';
 export class ActivityTextRepository implements ActivityRepository {
   private filePath = path.resolve(__dirname, 'data.json');
 
+  constructor() {
+    if (!fs.existsSync(this.filePath)) {
+      fs.writeFileSync(this.filePath, JSON.stringify([]), 'utf-8');
+    }
+  }
+
   public saveActivities(activities: Activity[]): void {
     this.saveActivitiesJSON(activities.map((i) => i.values));
   }
 
   public getActivities(query: GetActivitiesQuery): Activity[] {
-    const activitiesJSON = this.getActivitiesJSON({ current: undefined });
-    return activitiesJSON.map((i) => Activity.fromPrimities(i));
+    const activitiesJSON = this.getActivitiesJSON(query);
+    const selectedActivities: ActivityPrimitivies[] = [];
+
+    const queryId = query.id;
+    if (queryId !== undefined) {
+      const found = activitiesJSON.find((i) => i.id === queryId.value);
+      if (found) {
+        selectedActivities.push(found);
+      }
+    }
+
+    return selectedActivities
+      .filter((i) => query.current === undefined || i.finished === false)
+      .map((i) => Activity.fromPrimities(i));
   }
 
   public getActivity(id: IdValueObject): Activity | undefined {
@@ -59,9 +77,6 @@ export class ActivityTextRepository implements ActivityRepository {
   }
 
   private getActivitiesJSON(query: GetActivitiesQuery): ActivityPrimitivies[] {
-    if (!fs.existsSync(this.filePath)) {
-      fs.writeFileSync(this.filePath, JSON.stringify([]), 'utf-8');
-    }
     const raw = fs.readFileSync(this.filePath, 'utf-8');
     return JSON.parse(raw) as ActivityPrimitivies[];
   }
