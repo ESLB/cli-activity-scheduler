@@ -53,6 +53,27 @@ export class ActivityTextRepository implements ActivityRepository {
     return Activity.fromPrimities(activityJSON);
   }
 
+  public getPredecessors(id: IdValueObject): Activity[] {
+    const jsonActivities = this.getActivitiesJSON({});
+    let targetIds = [id.value];
+    const predecessors = [];
+
+    let keepSearching = true;
+
+    while (keepSearching) {
+      const found = jsonActivities.filter((i) => {
+        for (const targetId of targetIds) {
+          return i.predecessors.includes(targetId);
+        }
+      });
+      predecessors.push(...found);
+      keepSearching = found.length === 0 ? false : true;
+      targetIds = found.map((i) => i.id);
+    }
+
+    return predecessors.map((i) => Activity.fromPrimities(i));
+  }
+
   private saveActivitiesJSON(activities: ActivityPrimitivies[]): void {
     const savedActivies = this.getActivitiesJSON({ current: undefined });
     for (const activity of activities) {

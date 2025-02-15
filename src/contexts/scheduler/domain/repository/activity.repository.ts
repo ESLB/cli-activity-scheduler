@@ -10,4 +10,5 @@ export interface ActivityRepository {
   saveActivities(activities: Activity[]): void;
   getActivity(id: IdValueObject): Activity | undefined;
   getActivities(query: GetActivitiesQuery): Activity[];
+  getPredecessors(id: IdValueObject): Activity[];
 }

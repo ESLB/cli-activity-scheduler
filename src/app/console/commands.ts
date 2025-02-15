@@ -9,12 +9,15 @@ import type { Completer } from 'readline';
 import { GetActivityById } from '../../contexts/scheduler/application/getActivityById.service';
 import { parse } from 'shell-quote';
 import { ActivityPrimitivies } from '../../contexts/scheduler/domain/entity/activity.entity';
+import { SetDependencyService } from '../../contexts/scheduler/application/setDependency.service';
+import { IdValueObject } from '../../contexts/scheduler/domain/valueObject/id.valueObject';
 
 const activityTextRepository = new ActivityTextRepository();
 const listActivitiesService = new ListActivitiesService(activityTextRepository);
 const createActivityService = new CreateActivityService(activityTextRepository);
 const patchActivityService = new PatchActivityService(activityTextRepository);
 const findActivityService = new GetActivityById(activityTextRepository);
+const setDependencyService = new SetDependencyService(activityTextRepository);
 const idTextRepository = new IdTextRepository();
 const getMatchingIdsService = new GetMatchingIdsService(idTextRepository);
 
@@ -117,6 +120,13 @@ const setDependencyCommand = {
   handler: (argv: ArgumentsCamelCase) => {
     const t_id = argv.t_id as string;
     const p_id = argv.p_id as string;
+
+    setDependencyService.execute(
+      new IdValueObject(t_id),
+      new IdValueObject(p_id),
+    );
+
+    console.log('Dependency set correctly');
 
     console.log({ t_id, p_id });
   },

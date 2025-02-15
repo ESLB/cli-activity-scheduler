@@ -17,4 +17,8 @@ export class IdValueObject {
   static random() {
     return new IdValueObject(uuidv4());
   }
+
+  isEqual(other: IdValueObject) {
+    return this.value === other.value;
+  }
 }

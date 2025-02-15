@@ -12,6 +12,7 @@ export interface ActivityPrimitivies {
   doesNeedRestAfter: boolean;
   timeAlreadySpent: number;
   finished: boolean;
+  predecessors: string[];
 }
 
 export interface CreateActivityRequest {
@@ -28,6 +29,7 @@ export class Activity {
   public doesNeedRestAfter: BooleanValueObject;
   public timeAlreadySpent: IntegerValueObject;
   public finished: BooleanValueObject;
+  public predecessors: IdValueObject[];
 
   constructor({
     id,
@@ -37,6 +39,7 @@ export class Activity {
     timeAlreadySpent,
     finished: current,
     _v,
+    predecessors,
   }: {
     name: StringValueObject;
     duration: IntegerValueObject;
@@ -45,6 +48,7 @@ export class Activity {
     finished: BooleanValueObject;
     id: IdValueObject;
     _v: IntegerValueObject;
+    predecessors: IdValueObject[];
   }) {
     this.id = id ?? uuidv4();
     this.name = name;
@@ -53,6 +57,7 @@ export class Activity {
     this.timeAlreadySpent = timeAlreadySpent;
     this._v = _v;
     this.finished = current;
+    this.predecessors = predecessors;
   }
 
   static create({
@@ -68,6 +73,7 @@ export class Activity {
       _v: new IntegerValueObject(0),
       finished: new BooleanValueObject(false),
       timeAlreadySpent: new IntegerValueObject(0),
+      predecessors: [],
     });
   }
 
@@ -80,6 +86,7 @@ export class Activity {
       timeAlreadySpent: new IntegerValueObject(primitives.timeAlreadySpent),
       finished: new BooleanValueObject(primitives.finished),
       _v: new IntegerValueObject(primitives._v),
+      predecessors: primitives.predecessors.map((i) => new IdValueObject(i)),
     });
   }
 
@@ -92,6 +99,7 @@ export class Activity {
       doesNeedRestAfter: this.doesNeedRestAfter.value,
       timeAlreadySpent: this.timeAlreadySpent.value,
       finished: this.finished.value,
+      predecessors: this.predecessors.map((i) => i.value),
     };
   }
 }
