@@ -9,6 +9,7 @@ export class SetDependencyService {
     const predecessorActivity =
       this.activityRepository.getActivity(predecessorId);
 
+    // Validations
     if (!targetActivity) {
       throw Error('The target activity doesn\t exists');
     }
@@ -17,6 +18,13 @@ export class SetDependencyService {
     }
     if (targetId.isEqual(predecessorId)) {
       throw Error("A target can't be its own predecessor");
+    }
+    if (
+      targetActivity.predecessors
+        .map((i) => i.value)
+        .includes(predecessorId.value)
+    ) {
+      return;
     }
     for (const activity of this.activityRepository.getPredecessors(
       predecessorId,
