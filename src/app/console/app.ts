@@ -8,7 +8,7 @@ export type CircuiteBreaker = { continue: boolean; showErrorMessage: boolean };
 
 export class App {
   private readonly lineReader;
-  private readonly yarg: Argv;
+  private yarg: Argv;
   private readonly circuitBreaker: CircuiteBreaker;
 
   constructor(customCompleter: Completer) {
@@ -27,8 +27,17 @@ export class App {
       showErrorMessage: true,
     };
     this.yarg = yargs();
+    this.setUpYargs();
+  }
+
+  private setUpYargs() {
     this.setCommands(commands);
     this.setFailureHandler();
+  }
+
+  private resetYarg() {
+    this.yarg = yargs();
+    this.setUpYargs();
   }
 
   private setCommands(commands: CommandModule[]) {
@@ -64,6 +73,7 @@ export class App {
       this.yarg.parse(args.map((i) => i.toString()));
       this.resetCircuitBreaker();
     } catch (error: any) {
+      this.resetYarg();
       if ('message' in error) {
         console.log(`Error: ${error.message}`);
       } else {
