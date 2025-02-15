@@ -1,7 +1,11 @@
-import { Activity } from '../domain/entity/activity.entity';
+import { ActivityPrimitivies } from '../domain/entity/activity.entity';
 import { ActivityRepository } from '../domain/repository/activity.repository';
+import { BooleanValueObject } from '../domain/valueObject/boolean.valueObject';
+import { IdValueObject } from '../domain/valueObject/id.valueObject';
+import { IntegerValueObject } from '../domain/valueObject/integer.valueObject';
+import { StringValueObject } from '../domain/valueObject/string.valueObject';
 
-export type PatchActivityRequest = Partial<Activity>;
+export type PatchActivityRequest = Partial<ActivityPrimitivies>;
 
 export class PatchActivityService {
   constructor(private readonly activityRepository: ActivityRepository) {}
@@ -11,24 +15,30 @@ export class PatchActivityService {
     if (id === undefined) {
       throw Error('Missing required id');
     }
-    const activity = this.activityRepository.getActivity(id);
+    const activity = this.activityRepository.getActivity(new IdValueObject(id));
     if (activity === undefined) {
       throw Error('Activity not found');
     }
     if (request.name !== undefined) {
-      activity.name = request.name;
+      activity.name = new StringValueObject(request.name);
     }
     if (request.duration !== undefined) {
-      activity.duration = request.duration;
+      activity.duration = new IntegerValueObject(request.duration);
     }
     if (request.doesNeedRestAfter !== undefined) {
-      activity.doesNeedRestAfter = request.doesNeedRestAfter;
+      activity.doesNeedRestAfter = new BooleanValueObject(
+        request.doesNeedRestAfter,
+      );
     }
     if (request.timeAlreadySpent !== undefined) {
-      activity.timeAlreadySpent = request.timeAlreadySpent;
+      activity.timeAlreadySpent = new IntegerValueObject(
+        request.timeAlreadySpent,
+      );
     }
     if (request.finished !== undefined) {
-      activity.finished = request.finished;
+      activity.finished = new BooleanValueObject(request.finished);
     }
+
+    this.activityRepository.saveActivities([activity]);
   }
 }
