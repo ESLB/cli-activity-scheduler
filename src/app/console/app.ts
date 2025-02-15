@@ -59,9 +59,17 @@ export class App {
   }
 
   private executeCommand(input: string) {
-    const args = parse(input);
-    this.yarg.parse(args.map((i) => i.toString()));
-    this.resetCircuitBreaker();
+    try {
+      const args = parse(input);
+      this.yarg.parse(args.map((i) => i.toString()));
+      this.resetCircuitBreaker();
+    } catch (error: any) {
+      if ('message' in error) {
+        console.log(`Error: ${error.message}`);
+      } else {
+        console.log(error);
+      }
+    }
   }
 
   private resetCircuitBreaker() {
