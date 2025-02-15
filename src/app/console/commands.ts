@@ -7,6 +7,7 @@ import { GetMatchingIdsService } from '../../contexts/scheduler/application/getM
 import { IdTextRepository } from '../../contexts/scheduler/infrastructure/repository/idText.repository';
 import type { Completer } from 'readline';
 import { GetActivityById } from '../../contexts/scheduler/application/getActivityById.service';
+import { parse } from 'shell-quote';
 
 const activityTextRepository = new ActivityTextRepository();
 const listActivitiesService = new ListActivitiesService(activityTextRepository);
@@ -15,9 +16,41 @@ const patchActivityService = new PatchActivityService(activityTextRepository);
 const findActivityService = new GetActivityById(activityTextRepository);
 const idTextRepository = new IdTextRepository();
 const getMatchingIdsService = new GetMatchingIdsService(idTextRepository);
+
+const getId = (line: string): string | undefined => {
+  let searchingId = undefined;
+  const options = parse(line);
+  const antepenultimo = options[options.length - 2]?.toString();
+  const last = options[options.length - 1]?.toString();
+  if (antepenultimo === '--id') {
+    searchingId = last;
+  } else if (last.includes('--id=')) {
+    const parts = last.split('--id=');
+    searchingId = parts[1];
+  }
+  return searchingId;
+};
+
 export const customCompleter: Completer = (line) => {
-  const matchingIds = getMatchingIdsService.execute(line);
-  return [matchingIds.map((i) => i.value), line];
+  if (line.length < 3) {
+    return [[], line];
+  }
+
+  const searchingId = getId(line);
+  if (searchingId === undefined) {
+    return [[], line];
+  }
+
+  const matchingIds = getMatchingIdsService
+    .execute(searchingId)
+    .map((i) => i.value);
+
+  if (matchingIds.length === 1) {
+    const firstPart = line.substring(0, line.length - searchingId.length);
+    return [[firstPart + matchingIds[0]], line];
+  }
+
+  return [matchingIds, line];
 };
 
 export const commands: CommandModule[] = [];
@@ -43,10 +76,6 @@ const findActivityCommand = {
   },
   handler: (argv: ArgumentsCamelCase) => {
     const id = argv.id as string;
-
-    console.log({
-      id,
-    });
 
     console.log(findActivityService.execute(id).values);
   },

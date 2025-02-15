@@ -33,10 +33,14 @@ export class ActivityTextRepository implements ActivityRepository {
       if (found) {
         selectedActivities.push(found);
       }
+    } else {
+      selectedActivities.push(...activitiesJSON);
     }
 
     return selectedActivities
-      .filter((i) => query.current === undefined || i.finished === false)
+      .filter(
+        (i) => query.current === undefined || !i.finished === query.current,
+      )
       .map((i) => Activity.fromPrimities(i));
   }
 
