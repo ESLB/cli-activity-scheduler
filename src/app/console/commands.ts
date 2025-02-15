@@ -99,6 +99,29 @@ export const customCompleter: Completer = (line) => {
 
 export const commands: CommandModule[] = [];
 
+const setDependencyCommand = {
+  command: 'sd',
+  describe: 'Set dependency on activity',
+  builder: {
+    t_id: {
+      describe: 'Target activity Id',
+      type: 'string',
+      demandOption: true,
+    },
+    p_id: {
+      describe: 'Predecessor activity Id',
+      type: 'string',
+      demandOption: true,
+    },
+  },
+  handler: (argv: ArgumentsCamelCase) => {
+    const t_id = argv.t_id as string;
+    const p_id = argv.p_id as string;
+
+    console.log({ t_id, p_id });
+  },
+} satisfies CommandModule;
+
 const listActivitiesCommand = {
   command: 'list',
   describe: 'List activities',
@@ -258,4 +281,5 @@ commands.push(
   createActivityCommand,
   patchActivityCommand,
   findActivityCommand,
+  setDependencyCommand,
 );
