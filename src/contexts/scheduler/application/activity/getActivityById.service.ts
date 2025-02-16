@@ -1,5 +1,5 @@
-import { ActivityRepository } from '../domain/repository/activity.repository';
-import { IdValueObject } from '../domain/valueObject/id.valueObject';
+import { ActivityRepository } from '../../domain/repository/activity.repository';
+import { IdValueObject } from '../../domain/valueObject/id.valueObject';
 
 export class GetActivityById {
   constructor(private readonly activityRepository: ActivityRepository) {}

@@ -1,6 +1,6 @@
 import { ArgumentsCamelCase, CommandModule } from 'yargs';
-import { IdValueObject } from '../../../contexts/scheduler/domain/valueObject/id.valueObject';
-import { setDependencyService } from '../services/activity.service';
+import { IdValueObject } from '../../../../contexts/scheduler/domain/valueObject/id.valueObject';
+import { setDependencyService } from '../../services/activity.service';
 
 export const setDependencyCommand = {
   command: 'sd',

@@ -1,6 +1,6 @@
 import { CommandModule } from 'yargs';
-import { listActivitiesService } from '../services/activity.service';
-import { ActivityPrimitivies } from '../../../contexts/scheduler/domain/entity/activity.entity';
+import { listActivitiesService } from '../../services/activity.service';
+import { ActivityPrimitivies } from '../../../../contexts/scheduler/domain/entity/activity.entity';
 
 const addWithNewLine = (target: string, payload: string | boolean | number) => {
   return target + payload + '\n';

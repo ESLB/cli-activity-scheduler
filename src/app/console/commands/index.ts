@@ -1,12 +1,12 @@
 import { CommandModule } from 'yargs';
-import { createActivityCommand } from './createActivity.command';
-import { findActivityCommand } from './findActivity.command';
-import { listActivitiesCommand } from './listActivities.command';
-import { clearCommand } from './clear.command';
-import { defaultCommand } from './default.command';
-import { greetingCommand } from './greeting.command';
-import { patchActivityCommand } from './patchActivity.command';
-import { setDependencyCommand } from './setDependency.command';
+import { createActivityCommand } from './activity/createActivity.command';
+import { findActivityCommand } from './activity/findActivity.command';
+import { listActivitiesCommand } from './activity/listActivities.command';
+import { clearCommand } from './utility/clear.command';
+import { defaultCommand } from './utility/default.command';
+import { greetingCommand } from './utility/greeting.command';
+import { patchActivityCommand } from './activity/patchActivity.command';
+import { setDependencyCommand } from './activity/setDependency.command';
 
 export const commands = [
   clearCommand,

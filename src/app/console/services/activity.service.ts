@@ -1,9 +1,9 @@
-import { CreateActivityService } from '../../../contexts/scheduler/application/createActivity.service';
-import { GetActivityById } from '../../../contexts/scheduler/application/getActivityById.service';
-import { GetMatchingIdsService } from '../../../contexts/scheduler/application/getMatchingIds.service';
-import { ListActivitiesService } from '../../../contexts/scheduler/application/listActivities.service';
-import { PatchActivityService } from '../../../contexts/scheduler/application/patchActivity.service';
-import { SetDependencyService } from '../../../contexts/scheduler/application/setDependency.service';
+import { CreateActivityService } from '../../../contexts/scheduler/application/activity/createActivity.service';
+import { GetActivityById } from '../../../contexts/scheduler/application/activity/getActivityById.service';
+import { GetMatchingIdsService } from '../../../contexts/scheduler/application/activity/getMatchingIds.service';
+import { ListActivitiesService } from '../../../contexts/scheduler/application/activity/listActivities.service';
+import { PatchActivityService } from '../../../contexts/scheduler/application/activity/patchActivity.service';
+import { SetDependencyService } from '../../../contexts/scheduler/application/activity/setDependency.service';
 import { ActivityTextRepository } from '../../../contexts/scheduler/infrastructure/repository/activityText.repository';
 import { IdTextRepository } from '../../../contexts/scheduler/infrastructure/repository/idText.repository';
 

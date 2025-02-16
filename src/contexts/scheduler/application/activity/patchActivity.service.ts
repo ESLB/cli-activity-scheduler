@@ -1,9 +1,9 @@
-import { ActivityPrimitivies } from '../domain/entity/activity.entity';
-import { ActivityRepository } from '../domain/repository/activity.repository';
-import { BooleanValueObject } from '../domain/valueObject/boolean.valueObject';
-import { IdValueObject } from '../domain/valueObject/id.valueObject';
-import { IntegerValueObject } from '../domain/valueObject/integer.valueObject';
-import { StringValueObject } from '../domain/valueObject/string.valueObject';
+import { ActivityPrimitivies } from '../../domain/entity/activity.entity';
+import { ActivityRepository } from '../../domain/repository/activity.repository';
+import { BooleanValueObject } from '../../domain/valueObject/boolean.valueObject';
+import { IdValueObject } from '../../domain/valueObject/id.valueObject';
+import { IntegerValueObject } from '../../domain/valueObject/integer.valueObject';
+import { StringValueObject } from '../../domain/valueObject/string.valueObject';
 
 export type PatchActivityRequest = Partial<ActivityPrimitivies>;
 

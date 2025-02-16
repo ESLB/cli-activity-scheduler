@@ -1,5 +1,5 @@
 import { ArgumentsCamelCase, CommandModule } from 'yargs';
-import { findActivityService } from '../services/activity.service';
+import { findActivityService } from '../../services/activity.service';
 
 export const findActivityCommand = {
   command: 'find',
