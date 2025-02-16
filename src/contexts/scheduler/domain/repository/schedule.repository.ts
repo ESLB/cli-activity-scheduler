@@ -1,7 +1,7 @@
 import { Schedule } from '../entity/schedule.entity';
 
 export interface ScheduleRepository {
-  saveSchedule(schedule: Schedule): void;
-  getSchedule(): Schedule;
-  flushSchedule(): void;
+  save(schedule: Schedule): void;
+  get(): Schedule;
+  flush(): void;
 }
