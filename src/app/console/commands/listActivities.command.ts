@@ -13,8 +13,9 @@ const addFieldIfAvailable = (
 ) => {
   const availableTypes = ['string', 'boolean', 'number'];
   if (field in payload && availableTypes.includes(typeof payload[field])) {
-    const value =
-      field === 'id' ? payload[field].substring(0, 13) : payload[field];
+    // const value =
+    //   field === 'id' ? payload[field].substring(0, 13) : payload[field];
+    const value = payload[field];
     const withPrefix = `  ${field}: ${value}`;
     return addWithNewLine(target, withPrefix);
   } else {
