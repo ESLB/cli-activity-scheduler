@@ -1,8 +1,8 @@
 import yargs, { ArgumentsCamelCase, Argv, command, CommandModule } from 'yargs';
 import readline from 'readline';
-import type { Completer } from 'readline';
-import { commands } from './commands';
+import { commands } from './commands/';
 import { parse } from 'shell-quote';
+import { customCompleter } from './customComplete.readline';
 
 export type CircuiteBreaker = { continue: boolean; showErrorMessage: boolean };
 
@@ -11,7 +11,7 @@ export class App {
   private yarg: Argv;
   private readonly circuitBreaker: CircuiteBreaker;
 
-  constructor(customCompleter: Completer) {
+  constructor() {
     this.lineReader = readline
       .createInterface({
         input: process.stdin,
