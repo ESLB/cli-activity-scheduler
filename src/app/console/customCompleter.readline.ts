@@ -31,7 +31,11 @@ export const customCompleter: Completer = (line) => {
   }
 
   const searchingId = getLastId(line);
-  if (searchingId === undefined || searchingId === '') {
+  if (
+    searchingId === undefined ||
+    searchingId === '' ||
+    searchingId.length < 3
+  ) {
     return [[], line];
   }
 

@@ -5,6 +5,9 @@ export class GetMatchingIdsService {
   constructor(readonly idRepository: IdRepository) {}
 
   execute(firstLetters: string): IdValueObject[] {
+    if (firstLetters.length < 3) {
+      return [];
+    }
     return this.idRepository.getMatchingId(firstLetters);
   }
 }
