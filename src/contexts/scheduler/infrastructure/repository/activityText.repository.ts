@@ -11,7 +11,7 @@ import path from 'path';
 import { IdValueObject } from '../../domain/valueObject/id.valueObject';
 
 export class ActivityTextRepository implements ActivityRepository {
-  private filePath = path.resolve(__dirname, 'data.json');
+  private filePath = path.resolve(__dirname, 'activities.json');
 
   constructor() {
     if (!fs.existsSync(this.filePath)) {
