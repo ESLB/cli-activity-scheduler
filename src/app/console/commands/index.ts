@@ -11,7 +11,7 @@ import { addActivityCommand } from './schedule/addActivity.command';
 import { getScheduleCommand } from './schedule/getSchedule.command';
 import { removeLastActivityCommand } from './schedule/removeLastActivity.command';
 import { flushActivitiesCommand } from './schedule/flushActivities.command';
-import { getItineraryCommand } from './schedule/getItinerary.command copy';
+import { getItineraryCommand } from './schedule/getItinerary.command';
 
 export const commands = [
   clearCommand,
