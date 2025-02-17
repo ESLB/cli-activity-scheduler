@@ -14,4 +14,12 @@ export class IntegerValueObject {
       throw Error('Not integer');
     }
   }
+
+  add(other: IntegerValueObject): IntegerValueObject {
+    return new IntegerValueObject(this.value + other.value);
+  }
+
+  substract(other: IntegerValueObject): IntegerValueObject {
+    return new IntegerValueObject(this.value - other.value);
+  }
 }

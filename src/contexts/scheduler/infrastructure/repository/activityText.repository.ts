@@ -112,7 +112,17 @@ export class ActivityTextRepository implements ActivityRepository {
       if (i.predecessors === undefined || i.predecessors === null) {
         i.predecessors = [];
       }
+      if (i.restTime === undefined) {
+        i.restTime = 0;
+      }
+      if (i.description === undefined) {
+        i.description = '';
+      }
+      if (i.preparationTime === undefined) {
+        i.preparationTime = 0;
+      }
     });
+
     return primitiveActivities;
   }
 }
