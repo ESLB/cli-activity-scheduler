@@ -21,7 +21,6 @@ export class ScheduleTextRepository implements ScheduleRepository {
 
   public get(): Schedule {
     const schedulePrimitive = this.getScheduleJSON();
-    console.log({ schedulePrimitive });
     return Schedule.fromPrimitives(schedulePrimitive);
   }
 
@@ -30,7 +29,6 @@ export class ScheduleTextRepository implements ScheduleRepository {
     if (savedSchedule._v !== schedule._v) {
       throw Error(`Version mismatch`);
     }
-    console.log({ schedule, savedSchedule });
     savedSchedule._v = savedSchedule._v + 1;
     savedSchedule.activities = schedule.activities;
     fs.writeFileSync(

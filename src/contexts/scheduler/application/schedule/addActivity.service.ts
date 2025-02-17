@@ -26,7 +26,13 @@ export class AddActivityService {
         'No se puede añadir una actividad que tiene predecesores si no están incluídos en el horario primero',
       );
     }
+    if (schedule.activities.map((i) => i.value).includes(activityId.value)) {
+      throw new Error(
+        'No se puede añadir dos veces la misma actividad al horario',
+      );
+    }
 
+    schedule.activities.push(activityId);
     this.scheduleRepository.save(schedule);
   }
 
