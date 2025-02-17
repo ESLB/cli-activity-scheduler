@@ -16,6 +16,10 @@ export class GenerateItinerary {
       ids: schedule.activities,
     });
 
-    return this.createItinerary.execute(activities);
+    return this.createItinerary.execute(
+      schedule.activities.map(
+        (i) => activities.find((act) => act.id.isEqual(i))!,
+      ),
+    );
   }
 }

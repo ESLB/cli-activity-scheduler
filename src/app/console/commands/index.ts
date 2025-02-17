@@ -12,6 +12,7 @@ import { getScheduleCommand } from './schedule/getSchedule.command';
 import { removeLastActivityCommand } from './schedule/removeLastActivity.command';
 import { flushActivitiesCommand } from './schedule/flushActivities.command';
 import { getItineraryCommand } from './schedule/getItinerary.command';
+import { finishActivityCommand } from './schedule/finishActivity.command';
 
 export const commands = [
   clearCommand,
@@ -27,4 +28,5 @@ export const commands = [
   removeLastActivityCommand,
   flushActivitiesCommand,
   getItineraryCommand,
+  finishActivityCommand,
 ] satisfies CommandModule[];

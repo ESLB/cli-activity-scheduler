@@ -2,11 +2,14 @@ import { CommandModule } from 'yargs';
 import { listActivitiesService } from '../../services/activity.service';
 import { ActivityPrimitivies } from '../../../../contexts/scheduler/domain/entity/activity.entity';
 
-const addWithNewLine = (target: string, payload: string | boolean | number) => {
+export const addWithNewLine = (
+  target: string,
+  payload: string | boolean | number,
+) => {
   return target + payload + '\n';
 };
 
-const addFieldIfAvailable = (
+export const addFieldIfAvailable = (
   target: string,
   payload: Record<string, any>,
   field: string,
@@ -23,9 +26,9 @@ const addFieldIfAvailable = (
   }
 };
 
-const noEndingCharacters = ['\n', '-'];
+export const noEndingCharacters = ['\n', '-'];
 
-const getCleanText = (text: string) => {
+export const getCleanText = (text: string) => {
   let last = text[text.length - 1];
   while (noEndingCharacters.includes(last)) {
     text = text.substring(0, text.length - 1);
@@ -35,7 +38,7 @@ const getCleanText = (text: string) => {
   return text + '\n';
 };
 
-const displaySimpleActivities = (activities: ActivityPrimitivies[]) => {
+export const displaySimpleActivities = (activities: ActivityPrimitivies[]) => {
   let text = '';
   for (const activity of activities) {
     text = addFieldIfAvailable(text, activity, 'id');
