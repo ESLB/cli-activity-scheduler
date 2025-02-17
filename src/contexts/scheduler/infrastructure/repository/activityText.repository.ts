@@ -28,11 +28,17 @@ export class ActivityTextRepository implements ActivityRepository {
     const selectedActivities: ActivityPrimitivies[] = [];
 
     const queryId = query.id;
+    const queryIds = query.ids;
+
     if (queryId !== undefined) {
       const found = activitiesJSON.find((i) => i.id === queryId.value);
       if (found) {
         selectedActivities.push(found);
       }
+    } else if (queryIds !== undefined) {
+      const values = queryIds.map((i) => i.value);
+      const found = activitiesJSON.filter((i) => values.includes(i.id));
+      selectedActivities.push(...found);
     } else {
       selectedActivities.push(...activitiesJSON);
     }
@@ -55,23 +61,21 @@ export class ActivityTextRepository implements ActivityRepository {
 
   public getPredecessors(id: IdValueObject): Activity[] {
     const jsonActivities = this.getActivitiesJSON({});
-    let targetIds = [id.value];
-    const predecessors = [];
-
-    let keepSearching = true;
-
-    while (keepSearching) {
-      const found = jsonActivities.filter((i) => {
-        for (const targetId of targetIds) {
-          return i.predecessors.includes(targetId);
-        }
-      });
-      predecessors.push(...found);
-      keepSearching = found.length === 0 ? false : true;
-      targetIds = found.map((i) => i.id);
+    const rootActivity = jsonActivities.find((i) => i.id === id.value);
+    if (rootActivity === undefined) {
+      return [];
     }
-
-    return predecessors.map((i) => Activity.fromPrimities(i));
+    const allPredecessors: ActivityPrimitivies[] = [];
+    let predecessorIds: string[] = rootActivity.predecessors;
+    let predecessorActivities = [];
+    while (predecessorIds.length > 0) {
+      predecessorActivities = jsonActivities.filter((i) =>
+        predecessorIds.includes(i.id),
+      );
+      allPredecessors.push(...predecessorActivities);
+      predecessorIds = predecessorActivities.flatMap((i) => i.predecessors);
+    }
+    return allPredecessors.map((i) => Activity.fromPrimities(i));
   }
 
   private saveActivitiesJSON(activities: ActivityPrimitivies[]): void {

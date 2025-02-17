@@ -10,6 +10,7 @@ import { setDependencyCommand } from './activity/setDependency.command';
 import { addActivityCommand } from './schedule/addActivity.command';
 import { getScheduleCommand } from './schedule/getSchedule.command';
 import { removeLastActivityCommand } from './schedule/removeLastActivity.command';
+import { flushActivitiesCommand } from './schedule/flushActivities.command';
 
 export const commands = [
   clearCommand,
@@ -23,4 +24,5 @@ export const commands = [
   addActivityCommand,
   getScheduleCommand,
   removeLastActivityCommand,
+  flushActivitiesCommand,
 ] satisfies CommandModule[];
