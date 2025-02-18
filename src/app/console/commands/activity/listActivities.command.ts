@@ -43,6 +43,7 @@ export const displaySimpleActivities = (activities: ActivityPrimitivies[]) => {
   for (const activity of activities) {
     text = addFieldIfAvailable(text, activity, 'id');
     text = addFieldIfAvailable(text, activity, 'name');
+    text = addFieldIfAvailable(text, activity, 'totalTime');
     text = addWithNewLine(text, '');
   }
   text = getCleanText(text);

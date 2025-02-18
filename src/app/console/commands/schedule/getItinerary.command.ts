@@ -7,11 +7,9 @@ const addHours = (text: string, activity: ItineraryActivityPrimitive) => {
   return addWithNewLine(text, `  ${activity.startTime} - ${activity.endtime}`);
 };
 
-const printName = (text: string, activity: ItineraryActivityPrimitive) => {
-  return addWithNewLine(text, `  ${activity.label}`);
-};
-const printId = (text: string, id: string) => {
-  return addWithNewLine(text, `  ${id.substring(0, 13)}`);
+const addText = (target: string, text?: string) => {
+  if (text === undefined) return target;
+  return addWithNewLine(target, `  ${text}`);
 };
 
 const printItineraryActivities = (activities: ItineraryActivityPrimitive[]) => {
@@ -19,8 +17,9 @@ const printItineraryActivities = (activities: ItineraryActivityPrimitive[]) => {
   text = addWithNewLine(text, '');
   for (const activity of activities) {
     text = addHours(text, activity);
-    text = printName(text, activity);
-    if (activity.id) text = printId(text, activity.id);
+    text = addText(text, activity.label);
+    text = addText(text, activity.description);
+    text = addText(text, activity.id?.substring(0, 13));
     text = addWithNewLine(text, '');
   }
   console.log(text);

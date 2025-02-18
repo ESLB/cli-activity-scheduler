@@ -16,6 +16,7 @@ export interface ActivityPrimitivies {
   predecessors: string[];
   restTime: number;
   preparationTime: number;
+  totalTime?: number;
 }
 
 export interface CreateActivityRequest {
@@ -41,6 +42,9 @@ export class Activity {
   public predecessors: IdValueObject[];
   get remainingTime() {
     return this.duration.substract(this.timeAlreadySpent);
+  }
+  get totalTime() {
+    return this.duration.add(this.preparationTime).add(this.restTime);
   }
 
   constructor({
@@ -133,6 +137,7 @@ export class Activity {
       predecessors: this.predecessors.map((i) => i.value),
       preparationTime: this.preparationTime.value,
       restTime: this.restTime.value,
+      totalTime: this.totalTime.value,
     };
   }
 }

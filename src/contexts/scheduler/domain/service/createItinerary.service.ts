@@ -69,6 +69,7 @@ export class CreateItinerary {
           startTime: startTime.textual,
           endtime: endTime.textual,
           label: text,
+          description: activity.description.value,
           id: activity.id.value,
         },
       ],
