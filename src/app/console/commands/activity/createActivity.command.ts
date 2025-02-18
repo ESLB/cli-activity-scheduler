@@ -6,38 +6,53 @@ export const createActivityCommand = {
   describe: 'Create activity',
   builder: {
     n: {
-      describe: 'First number',
+      describe: 'Nombre de la actividad',
       demandOption: true,
       type: 'string',
     },
     d: {
-      describe: 'Second number',
+      describe: 'Duración',
       demandOption: true,
       type: 'number',
     },
     r: {
-      describe: 'Second number',
+      describe: '¿Necesita descanso?',
       demandOption: true,
       type: 'boolean',
+    },
+    t: {
+      describe: 'Tiempo de descanso',
+      type: 'number',
+    },
+    p: {
+      describe: 'Tiempo de preparación',
+      type: 'number',
+    },
+    e: {
+      describe: 'Descripción',
+      type: 'string',
     },
   },
   handler: (argv: ArgumentsCamelCase) => {
     const name = argv.n as string;
     const duration = argv.d as number;
     const rest = argv.r as boolean;
-
-    console.log({
-      name,
-      duration,
-      doesNeedRestAfter: rest,
-    });
+    const t = argv.t as number;
+    const p = argv.p as number;
+    const e = argv.e as string;
 
     createActivityService.execute({
       name,
       duration,
       doesNeedRestAfter: rest,
+      restTime: t,
+      preparationTime: p,
+      description: e,
     });
 
     console.log('Creado correctamente');
   },
 } satisfies CommandModule;
+
+// Ejemplo
+// create --n "Limpiar mi escritorio test 1" --e "Quiero sacar el polvo, botar los papeles, volver a poner el tacho de basura, quitar el polvo de los equipos, acomodar algunas cosas a otros lados" --d 60 --r true --t 30 --p 15

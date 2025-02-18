@@ -5,7 +5,7 @@ import { IdValueObject } from '../../domain/valueObject/id.valueObject';
 import { IdRepository } from '../../domain/repository/id.repository';
 
 export class IdTextRepository implements IdRepository {
-  private filePath = path.resolve(__dirname, 'activities.json');
+  private filePath = path.resolve(__dirname, '../../../../../activities.json');
 
   public getMatchingId(firstLetters: string): IdValueObject[] {
     const activities = this.getActivitiesJSON();

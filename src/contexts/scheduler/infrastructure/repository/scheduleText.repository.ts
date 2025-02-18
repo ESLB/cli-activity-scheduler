@@ -7,7 +7,7 @@ import {
 } from '../../domain/entity/schedule.entity';
 
 export class ScheduleTextRepository implements ScheduleRepository {
-  private filePath = path.resolve(__dirname, 'schedule.json');
+  private filePath = path.resolve(__dirname, '../../../../../schedule.json');
 
   constructor() {
     if (!fs.existsSync(this.filePath)) {

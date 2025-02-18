@@ -11,7 +11,7 @@ import path from 'path';
 import { IdValueObject } from '../../domain/valueObject/id.valueObject';
 
 export class ActivityTextRepository implements ActivityRepository {
-  private filePath = path.resolve(__dirname, 'activities.json');
+  private filePath = path.resolve(__dirname, '../../../../../activities.json');
 
   constructor() {
     if (!fs.existsSync(this.filePath)) {
@@ -85,8 +85,7 @@ export class ActivityTextRepository implements ActivityRepository {
       if (index === -1) {
         savedActivies.push(activity);
         continue;
-      }
-      if (index) {
+      } else {
         const found = savedActivies[index];
         if (found._v !== activity._v) {
           throw Error(`Version mismatch`);
