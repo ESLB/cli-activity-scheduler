@@ -38,17 +38,22 @@ export class CreateItinerary {
     activity: Activity,
     startActivityTime: Time,
   ): [ItineraryActivityPrimitive[], Time] {
-    if (activity.preparationTime.value <= 0) {
+    const possibleRemainingTime = activity.preparationTime.substract(
+      activity.timeAlreadySpent,
+    );
+    if (possibleRemainingTime.value <= 0) {
       return [[], startActivityTime];
     }
+
     const startTime = startActivityTime;
-    const endTime = startActivityTime.add(activity.preparationTime);
+    const endTime = startActivityTime.add(possibleRemainingTime);
     const text = `Preparación para ${activity.name.value}`;
     return [
       [
         {
           startTime: startTime.textual,
           endtime: endTime.textual,
+          minutes: possibleRemainingTime.value,
           label: text,
         },
       ],
@@ -60,8 +65,18 @@ export class CreateItinerary {
     activity: Activity,
     startActivityTime: Time,
   ): [ItineraryActivityPrimitive[], Time] {
+    const possibleRemainingTime = activity.duration
+      .add(activity.preparationTime)
+      .substract(activity.timeAlreadySpent);
+    if (possibleRemainingTime.value <= 0) {
+      return [[], startActivityTime];
+    }
     const startTime = startActivityTime;
-    const endTime = startActivityTime.add(activity.remainingTime);
+    const usedTime =
+      activity.duration.value < possibleRemainingTime.value
+        ? activity.duration
+        : possibleRemainingTime;
+    const endTime = startActivityTime.add(usedTime);
     const text = `${activity.name.value}`;
     return [
       [
@@ -69,6 +84,7 @@ export class CreateItinerary {
           startTime: startTime.textual,
           endtime: endTime.textual,
           label: text,
+          minutes: usedTime.value,
           description: activity.description.value,
           id: activity.id.value,
         },
@@ -81,12 +97,19 @@ export class CreateItinerary {
     activity: Activity,
     startActivityTime: Time,
   ): [ItineraryActivityPrimitive[], Time] {
-    if (activity.restTime.value <= 0) {
+    const possibleRemainingTime = activity.restTime
+      .add(activity.duration)
+      .add(activity.preparationTime)
+      .substract(activity.timeAlreadySpent);
+    if (activity.restTime.value <= 0 || possibleRemainingTime.value <= 0) {
       return [[], startActivityTime];
     }
-
+    const usedTime =
+      activity.restTime.value < possibleRemainingTime.value
+        ? activity.restTime
+        : possibleRemainingTime;
     const startTime = startActivityTime;
-    const endTime = startActivityTime.add(activity.restTime);
+    const endTime = startActivityTime.add(usedTime);
     const text = `Descanso de ${activity.name.value}`;
     return [
       [
@@ -94,6 +117,7 @@ export class CreateItinerary {
           startTime: startTime.textual,
           endtime: endTime.textual,
           label: text,
+          minutes: usedTime.value,
         },
       ],
       endTime,

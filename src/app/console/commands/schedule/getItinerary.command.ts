@@ -19,6 +19,7 @@ const printItineraryActivities = (activities: ItineraryActivityPrimitive[]) => {
     text = addHours(text, activity);
     text = addText(text, activity.label);
     text = addText(text, activity.description);
+    text = addText(text, `Remaining: ${activity.minutes}`);
     text = addText(text, activity.id?.substring(0, 13));
     text = addWithNewLine(text, '');
   }
