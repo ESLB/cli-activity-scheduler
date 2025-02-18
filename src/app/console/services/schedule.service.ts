@@ -12,16 +12,20 @@ import { ScheduleTextRepository } from '../../../contexts/scheduler/infrastructu
 import { activityTextRepository } from './activity.service';
 
 export const scheduleTextRepository = new ScheduleTextRepository();
+const validateScheduleIntegrityService = new ValidateScheduleIntegrity(
+  activityTextRepository,
+);
 export const addActivityService = new AddActivityService(
   scheduleTextRepository,
   activityTextRepository,
-  new ValidateScheduleIntegrity(activityTextRepository),
+  validateScheduleIntegrityService,
 );
 export const getScheduleService = new GetScheduleService(
   scheduleTextRepository,
 );
 export const removeActivityFromSchedule = new RemoveActivityFromScheduleService(
   scheduleTextRepository,
+  validateScheduleIntegrityService,
 );
 export const flushActivitiesService = new FlushActivitiesService(
   scheduleTextRepository,
