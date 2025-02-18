@@ -59,23 +59,23 @@ export class ActivityTextRepository implements ActivityRepository {
     return Activity.fromPrimities(activityJSON);
   }
 
-  public getPredecessors(id: IdValueObject): Activity[] {
+  public getUnfinishedPredecessors(id: IdValueObject): Activity[] {
     const jsonActivities = this.getActivitiesJSON({});
     const rootActivity = jsonActivities.find((i) => i.id === id.value);
     if (rootActivity === undefined) {
       return [];
     }
-    const allPredecessors: ActivityPrimitivies[] = [];
+    const allUnfinishedPredecessors: ActivityPrimitivies[] = [];
     let predecessorIds: string[] = rootActivity.predecessors;
     let predecessorActivities = [];
     while (predecessorIds.length > 0) {
-      predecessorActivities = jsonActivities.filter((i) =>
-        predecessorIds.includes(i.id),
+      predecessorActivities = jsonActivities.filter(
+        (i) => predecessorIds.includes(i.id) && i.finished === false,
       );
-      allPredecessors.push(...predecessorActivities);
+      allUnfinishedPredecessors.push(...predecessorActivities);
       predecessorIds = predecessorActivities.flatMap((i) => i.predecessors);
     }
-    return allPredecessors.map((i) => Activity.fromPrimities(i));
+    return allUnfinishedPredecessors.map((i) => Activity.fromPrimities(i));
   }
 
   private saveActivitiesJSON(activities: ActivityPrimitivies[]): void {

@@ -38,6 +38,10 @@ export const patchActivityCommand = {
       describe: 'Tiempo ya ejecutado',
       type: 'number',
     },
+    f: {
+      describe: 'Tiempo ya ejecutado',
+      type: 'boolean',
+    },
   },
   handler: (argv: ArgumentsCamelCase) => {
     const id = argv.id as string;
@@ -48,6 +52,7 @@ export const patchActivityCommand = {
     const preparationTime = argv.p as number;
     const description = argv.e as string;
     const alreadySpent = argv.a as number;
+    const isFinished = argv.f as boolean;
 
     patchActivityService.execute({
       id,
@@ -58,6 +63,7 @@ export const patchActivityCommand = {
       preparationTime: preparationTime,
       description: description,
       timeAlreadySpent: alreadySpent,
+      finished: isFinished,
     });
 
     console.log('Actualizado correctamente');

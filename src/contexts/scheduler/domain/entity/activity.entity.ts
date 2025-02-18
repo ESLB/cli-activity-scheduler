@@ -40,8 +40,11 @@ export class Activity {
   public timeAlreadySpent: IntegerValueObject;
   public finished: BooleanValueObject;
   public predecessors: IdValueObject[];
+  get hasNoRemainingTime() {
+    return this.timeAlreadySpent.value > this.totalTime.value;
+  }
   get remainingTime() {
-    return this.duration.substract(this.timeAlreadySpent);
+    return this.totalTime.substract(this.timeAlreadySpent);
   }
   get totalTime() {
     return this.duration.add(this.preparationTime).add(this.restTime);

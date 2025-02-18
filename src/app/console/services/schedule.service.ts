@@ -1,4 +1,5 @@
 import { AddActivityService } from '../../../contexts/scheduler/application/schedule/addActivity.service';
+import { AddSpentTimeService } from '../../../contexts/scheduler/application/schedule/addSpentTime.service';
 import { FinishActivityService } from '../../../contexts/scheduler/application/schedule/finishActivity.service';
 import { FlushActivitiesService } from '../../../contexts/scheduler/application/schedule/flushActivities.service';
 import { GenerateItinerary } from '../../../contexts/scheduler/application/schedule/generateItinerary.service';
@@ -33,6 +34,10 @@ export const generateItineraryService = new GenerateItinerary(
   new CreateItinerary(),
 );
 export const finishActivityService = new FinishActivityService(
+  scheduleTextRepository,
+  activityTextRepository,
+);
+export const addSpentTimeService = new AddSpentTimeService(
   scheduleTextRepository,
   activityTextRepository,
 );

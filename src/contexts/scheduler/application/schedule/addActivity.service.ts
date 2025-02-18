@@ -32,7 +32,8 @@ export class AddActivityService {
 
     const activityIdsInSchedule: IdValueObject[] = [];
     for (const actId of schedule.activities) {
-      const predecessors = this.activityRepository.getPredecessors(actId);
+      const predecessors =
+        this.activityRepository.getUnfinishedPredecessors(actId);
       if (
         predecessors.length > 0 &&
         !this.areIdsAlreadyIncluded(activityIdsInSchedule, predecessors)

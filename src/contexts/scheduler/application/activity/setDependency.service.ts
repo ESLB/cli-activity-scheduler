@@ -26,7 +26,7 @@ export class SetDependencyService {
     ) {
       return;
     }
-    for (const activity of this.activityRepository.getPredecessors(
+    for (const activity of this.activityRepository.getUnfinishedPredecessors(
       predecessorId,
     )) {
       if (activity.predecessors.map((i) => i.value).includes(targetId.value)) {
