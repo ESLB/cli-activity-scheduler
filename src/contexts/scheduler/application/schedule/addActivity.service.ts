@@ -1,8 +1,8 @@
 import { Activity } from '../../domain/entity/activity.entity';
-import { Schedule } from '../../domain/entity/schedule.entity';
 import { ActivityRepository } from '../../domain/repository/activity.repository';
 import { ScheduleRepository } from '../../domain/repository/schedule.repository';
 import { IdValueObject } from '../../domain/valueObject/id.valueObject';
+import { IntegerValueObject } from '../../domain/valueObject/integer.valueObject';
 
 export class AddActivityService {
   constructor(
@@ -10,39 +10,50 @@ export class AddActivityService {
     private readonly activityRepository: ActivityRepository,
   ) {}
 
-  execute(activityId: IdValueObject): void {
+  execute(activityId: IdValueObject, position?: IntegerValueObject): void {
+    if (position && position.value < 1) {
+      throw new Error('La posición debe ser mayor igual a 1');
+    }
     const activity = this.activityRepository.getActivity(activityId);
     const schedule = this.scheduleRepository.get();
-
     if (activity === undefined) {
       throw new Error('Actividad no encontrada');
     }
-    const predecessors = this.activityRepository.getPredecessors(activityId);
-    if (
-      predecessors.length > 0 &&
-      !this.areActivitiesInSchedule(schedule, predecessors)
-    ) {
-      throw new Error(
-        'No se puede añadir una actividad que tiene predecesores si no están incluídos en el horario primero',
-      );
-    }
-    if (schedule.activities.map((i) => i.value).includes(activityId.value)) {
-      throw new Error(
-        'No se puede añadir dos veces la misma actividad al horario',
-      );
+
+    schedule.activities = schedule.activities.filter(
+      (i) => !i.isEqual(activityId),
+    );
+    const arrayIndex = position
+      ? position.value - 1
+      : schedule.activities.length > 0
+        ? schedule.activities.length
+        : 0;
+    schedule.activities.splice(arrayIndex, 0, activityId);
+
+    const activityIdsInSchedule: IdValueObject[] = [];
+    for (const actId of schedule.activities) {
+      const predecessors = this.activityRepository.getPredecessors(actId);
+      if (
+        predecessors.length > 0 &&
+        !this.areIdsAlreadyIncluded(activityIdsInSchedule, predecessors)
+      ) {
+        throw new Error(
+          'No se puede realizar la operación porque ocasionaría una inconsistencia',
+        );
+      }
+      activityIdsInSchedule.push(actId);
     }
 
-    schedule.activities.push(activityId);
     this.scheduleRepository.save(schedule);
   }
 
-  private areActivitiesInSchedule(
-    schedule: Schedule,
+  private areIdsAlreadyIncluded(
+    previousActivityIds: IdValueObject[],
     activities: Activity[],
   ): boolean {
     for (const activity of activities) {
       if (
-        !schedule.activities.map((i) => i.value).includes(activity.id.value)
+        !previousActivityIds.map((i) => i.value).includes(activity.id.value)
       ) {
         return false;
       }
