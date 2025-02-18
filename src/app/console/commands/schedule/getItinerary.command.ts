@@ -4,7 +4,10 @@ import { ItineraryActivityPrimitive } from '../../../../contexts/scheduler/domai
 import { addWithNewLine } from '../activity/listActivities.command';
 
 const addHours = (text: string, activity: ItineraryActivityPrimitive) => {
-  return addWithNewLine(text, `  ${activity.startTime} - ${activity.endtime}`);
+  return addWithNewLine(
+    text,
+    `  ${activity.startTime} - ${activity.endtime} Time: ${activity.minutes} min`,
+  );
 };
 
 const addText = (target: string, text?: string) => {
@@ -12,14 +15,15 @@ const addText = (target: string, text?: string) => {
   return addWithNewLine(target, `  ${text}`);
 };
 
-const printItineraryActivities = (activities: ItineraryActivityPrimitive[]) => {
+export const printItineraryActivities = (
+  activities: ItineraryActivityPrimitive[],
+) => {
   let text = '';
   text = addWithNewLine(text, '');
   for (const activity of activities) {
-    text = addHours(text, activity);
     text = addText(text, activity.label);
+    text = addHours(text, activity);
     text = addText(text, activity.description);
-    text = addText(text, `Remaining: ${activity.minutes}`);
     text = addText(text, activity.id?.substring(0, 13));
     text = addWithNewLine(text, '');
   }

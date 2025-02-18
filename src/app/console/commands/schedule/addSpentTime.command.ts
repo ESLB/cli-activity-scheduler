@@ -1,6 +1,10 @@
 import { ArgumentsCamelCase, CommandModule } from 'yargs';
-import { addSpentTimeService } from '../../services/schedule.service';
+import {
+  addSpentTimeService,
+  generateItineraryService,
+} from '../../services/schedule.service';
 import { IntegerValueObject } from '../../../../contexts/scheduler/domain/valueObject/integer.valueObject';
+import { printItineraryActivities } from './getItinerary.command';
 
 export const addSpentTimeCommand = {
   command: 'spend',
@@ -17,6 +21,6 @@ export const addSpentTimeCommand = {
 
     addSpentTimeService.execute(new IntegerValueObject(spentTime));
 
-    console.log('Actualización registrada');
+    printItineraryActivities(generateItineraryService.execute());
   },
 } satisfies CommandModule;

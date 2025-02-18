@@ -4,9 +4,11 @@ export class Time {
   get textual(): string {
     const hours = Math.floor(this.minutes.value / 60);
     const minutes = this.minutes.value % 60;
-    const hoursText = hours < 10 ? `0${hours}` : `${hours}`;
+    const localHours = hours > 12 ? hours % 12 : hours;
+    const hoursText = localHours < 10 ? `0${localHours}` : `${localHours}`;
     const minutesText = minutes < 10 ? `0${minutes}` : `${minutes}`;
-    return `${hoursText}:${minutesText}`;
+    const indicator = hours >= 12 ? 'PM' : 'AM';
+    return `${hoursText}:${minutesText}${indicator}`;
   }
 
   constructor(public readonly minutes: IntegerValueObject) {}
