@@ -5,8 +5,9 @@ import { FlushActivitiesService } from '../../../contexts/scheduler/application/
 import { GenerateItinerary } from '../../../contexts/scheduler/application/schedule/generateItinerary.service';
 import { GetScheduleService } from '../../../contexts/scheduler/application/schedule/getSchedule.service';
 import { GetScheduleDetailService } from '../../../contexts/scheduler/application/schedule/getScheduleDetail.service';
-import { RemoveLastActivityService } from '../../../contexts/scheduler/application/schedule/removeLastActivity.service';
+import { RemoveActivityFromScheduleService } from '../../../contexts/scheduler/application/schedule/removeActivityFromSchedule.service';
 import { CreateItinerary } from '../../../contexts/scheduler/domain/service/createItinerary.service';
+import { ValidateScheduleIntegrity } from '../../../contexts/scheduler/domain/service/validateScheduleIntegrity.service';
 import { ScheduleTextRepository } from '../../../contexts/scheduler/infrastructure/repository/scheduleText.repository';
 import { activityTextRepository } from './activity.service';
 
@@ -14,11 +15,12 @@ export const scheduleTextRepository = new ScheduleTextRepository();
 export const addActivityService = new AddActivityService(
   scheduleTextRepository,
   activityTextRepository,
+  new ValidateScheduleIntegrity(activityTextRepository),
 );
 export const getScheduleService = new GetScheduleService(
   scheduleTextRepository,
 );
-export const removeLastActivityService = new RemoveLastActivityService(
+export const removeActivityFromSchedule = new RemoveActivityFromScheduleService(
   scheduleTextRepository,
 );
 export const flushActivitiesService = new FlushActivitiesService(

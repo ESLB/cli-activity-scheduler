@@ -9,7 +9,7 @@ import { patchActivityCommand } from './activity/patchActivity.command';
 import { setDependencyCommand } from './activity/setDependency.command';
 import { addActivityCommand } from './schedule/addActivity.command';
 import { getScheduleCommand } from './schedule/getSchedule.command';
-import { removeLastActivityCommand } from './schedule/removeLastActivity.command';
+import { removeActivityFromScheduleCommand } from './schedule/removeActivityFromSchedule.command';
 import { flushActivitiesCommand } from './schedule/flushActivities.command';
 import { getItineraryCommand } from './schedule/getItinerary.command';
 import { finishActivityCommand } from './schedule/finishActivity.command';
@@ -26,7 +26,7 @@ export const commands = [
   setDependencyCommand,
   addActivityCommand,
   getScheduleCommand,
-  removeLastActivityCommand,
+  removeActivityFromScheduleCommand,
   flushActivitiesCommand,
   getItineraryCommand,
   finishActivityCommand,

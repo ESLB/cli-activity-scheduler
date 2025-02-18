@@ -1,6 +1,6 @@
-import { Activity } from '../../domain/entity/activity.entity';
 import { ActivityRepository } from '../../domain/repository/activity.repository';
 import { ScheduleRepository } from '../../domain/repository/schedule.repository';
+import { ValidateScheduleIntegrity } from '../../domain/service/validateScheduleIntegrity.service';
 import { IdValueObject } from '../../domain/valueObject/id.valueObject';
 import { IntegerValueObject } from '../../domain/valueObject/integer.valueObject';
 
@@ -8,6 +8,7 @@ export class AddActivityService {
   constructor(
     private readonly scheduleRepository: ScheduleRepository,
     private readonly activityRepository: ActivityRepository,
+    private readonly validateScheduleIntegrity: ValidateScheduleIntegrity,
   ) {}
 
   execute(activityId: IdValueObject, position?: IntegerValueObject): void {
@@ -30,35 +31,8 @@ export class AddActivityService {
         : 0;
     schedule.activities.splice(arrayIndex, 0, activityId);
 
-    const activityIdsInSchedule: IdValueObject[] = [];
-    for (const actId of schedule.activities) {
-      const predecessors =
-        this.activityRepository.getUnfinishedPredecessors(actId);
-      if (
-        predecessors.length > 0 &&
-        !this.areIdsAlreadyIncluded(activityIdsInSchedule, predecessors)
-      ) {
-        throw new Error(
-          'No se puede realizar la operación porque ocasionaría una inconsistencia',
-        );
-      }
-      activityIdsInSchedule.push(actId);
-    }
+    this.validateScheduleIntegrity.execute(schedule);
 
     this.scheduleRepository.save(schedule);
-  }
-
-  private areIdsAlreadyIncluded(
-    previousActivityIds: IdValueObject[],
-    activities: Activity[],
-  ): boolean {
-    for (const activity of activities) {
-      if (
-        !previousActivityIds.map((i) => i.value).includes(activity.id.value)
-      ) {
-        return false;
-      }
-    }
-    return true;
   }
 }
