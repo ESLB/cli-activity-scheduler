@@ -4,9 +4,11 @@ import { ItineraryActivityPrimitive } from '../entity/itinerary.entity';
 import { Time } from '../valueObject/time.valueObject';
 
 export class CreateItinerary {
-  execute(activities: Activity[]) {
+  execute(activities: Activity[], startTimeHour?: number) {
     const itineraryActivities: ItineraryActivityPrimitive[] = [];
-    const startItinerary = this.getCurrentTime();
+    const startItinerary = startTimeHour
+      ? this.getStartTime(startTimeHour)
+      : this.getCurrentTime();
     let lastTime = startItinerary;
     for (const activity of activities) {
       const [preparationItinerary, preparationTime] =
@@ -28,6 +30,9 @@ export class CreateItinerary {
     }
     return itineraryActivities;
   }
+  getStartTime(startTimeHour: number) {
+    return new Time(new IntegerValueObject(Math.round(startTimeHour * 60)));
+  }
 
   private getCurrentTime(): Time {
     const minutesTillNow = new Date().getHours() * 60 + new Date().getMinutes();
@@ -47,7 +52,7 @@ export class CreateItinerary {
 
     const startTime = startActivityTime;
     const endTime = startActivityTime.add(possibleRemainingTime);
-    const text = `Preparación para ${activity.name.value}`;
+    const text = `Preparación para \"${activity.name.value}\"`;
     return [
       [
         {
@@ -110,7 +115,7 @@ export class CreateItinerary {
         : possibleRemainingTime;
     const startTime = startActivityTime;
     const endTime = startActivityTime.add(usedTime);
-    const text = `Descanso de ${activity.name.value}`;
+    const text = `Descanso de \"${activity.name.value}\"`;
     return [
       [
         {

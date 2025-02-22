@@ -17,7 +17,6 @@ export const createActivityCommand = {
     },
     r: {
       describe: '¿Necesita descanso?',
-      demandOption: true,
       type: 'boolean',
     },
     t: {
@@ -31,6 +30,11 @@ export const createActivityCommand = {
     e: {
       describe: 'Descripción',
       type: 'string',
+    },
+    s: {
+      describe: 'Parámetro de seguridad',
+      demandOption: true,
+      type: 'boolean',
     },
   },
   handler: (argv: ArgumentsCamelCase) => {

@@ -1,12 +1,15 @@
 import { ArgumentsCamelCase, CommandModule } from 'yargs';
 import { generateItineraryService } from '../../services/schedule.service';
-import { ItineraryActivityPrimitive } from '../../../../contexts/scheduler/domain/entity/itinerary.entity';
+import {
+  ActivityPartPrimitive,
+  ItineraryActivityPrimitive2,
+} from '../../../../contexts/scheduler/domain/entity/itinerary.entity';
 import { addWithNewLine } from '../activity/listActivities.command';
 
-const addHours = (text: string, activity: ItineraryActivityPrimitive) => {
+const addPart = (text: string, activityPart: ActivityPartPrimitive) => {
   return addWithNewLine(
     text,
-    `  ${activity.startTime} - ${activity.endtime} Time: ${activity.minutes} min`,
+    `  ${activityPart.label}:\t${activityPart.totalMinutes} min\t${activityPart.startTime} - ${activityPart.endTime}`,
   );
 };
 
@@ -16,15 +19,27 @@ const addText = (target: string, text?: string) => {
 };
 
 export const printItineraryActivities = (
-  activities: ItineraryActivityPrimitive[],
+  activities: ItineraryActivityPrimitive2[],
 ) => {
   let text = '';
   text = addWithNewLine(text, '');
-  for (const activity of activities) {
-    text = addText(text, activity.label);
-    text = addHours(text, activity);
-    text = addText(text, activity.description);
-    text = addText(text, activity.id?.substring(0, 13));
+  for (let index = 0; index < activities.length; index++) {
+    const activity = activities[index];
+
+    text = addText(text, activity.activityName);
+    if (activity.description) {
+      text = addText(text, activity.description);
+    }
+    if (activity.preparation.totalMinutes > 0) {
+      text = addPart(text, activity.preparation);
+    }
+    if (activity.activity.totalMinutes > 0) {
+      text = addPart(text, activity.activity);
+    }
+    if (activity.rest.totalMinutes > 0) {
+      text = addPart(text, activity.rest);
+    }
+    text = addText(text, `Id:\t\t${activity.id}`);
     text = addWithNewLine(text, '');
   }
   console.log(text);
@@ -33,8 +48,16 @@ export const printItineraryActivities = (
 export const getItineraryCommand = {
   command: 'it',
   describe: 'Print itinerary',
-  builder: {},
+  builder: {
+    t: {
+      describe: 'Tiempo de inicio en horas',
+      demandOption: false,
+      type: 'number',
+    },
+  },
   handler: (argv: ArgumentsCamelCase) => {
-    printItineraryActivities(generateItineraryService.execute());
+    console.clear();
+    const startTimeHour = argv.t as number;
+    printItineraryActivities(generateItineraryService.execute(startTimeHour));
   },
 } satisfies CommandModule;

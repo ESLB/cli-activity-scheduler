@@ -9,13 +9,13 @@ export interface ActivityPrimitivies {
   _v: number;
   name: string;
   description: string;
-  duration: number;
-  doesNeedRestAfter: boolean;
   timeAlreadySpent: number;
   finished: boolean;
   predecessors: string[];
-  restTime: number;
   preparationTime: number;
+  doesNeedRestAfter: boolean;
+  restTime: number;
+  duration: number;
   totalTime?: number;
 }
 
@@ -41,7 +41,7 @@ export class Activity {
   public finished: BooleanValueObject;
   public predecessors: IdValueObject[];
   get hasNoRemainingTime() {
-    return this.timeAlreadySpent.value > this.totalTime.value;
+    return this.timeAlreadySpent.value >= this.totalTime.value;
   }
   get remainingTime() {
     return this.totalTime.substract(this.timeAlreadySpent);

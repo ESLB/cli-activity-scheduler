@@ -54,7 +54,10 @@ export const listActivitiesCommand = {
   command: 'list',
   describe: 'List activities',
   handler: () => {
-    const activities = listActivitiesService.execute().map((i) => i.values);
+    const activities = listActivitiesService
+      .execute()
+      .map((i) => i.values)
+      .filter((i) => !i.finished);
     displaySimpleActivities(activities);
   },
 } satisfies CommandModule;

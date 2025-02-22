@@ -46,9 +46,6 @@ export class PatchActivityService {
         request.preparationTime,
       );
     }
-    if (request.finished !== undefined) {
-      activity.finished = new BooleanValueObject(request.finished);
-    }
 
     this.activityRepository.saveActivities([activity]);
   }

@@ -20,16 +20,14 @@ export class CreateActivityService {
     const activity = Activity.create({
       name: new StringValueObject(request.name),
       duration: new IntegerValueObject(request.duration),
-      doesNeedRestAfter: new BooleanValueObject(request.doesNeedRestAfter),
+      doesNeedRestAfter: new BooleanValueObject(
+        request.doesNeedRestAfter ?? false,
+      ),
       description: request.description
         ? new StringValueObject(request.description)
         : undefined,
-      restTime: request.restTime
-        ? new IntegerValueObject(request.restTime)
-        : undefined,
-      preparationTime: request.preparationTime
-        ? new IntegerValueObject(request.preparationTime)
-        : undefined,
+      restTime: new IntegerValueObject(request.restTime ?? 0),
+      preparationTime: new IntegerValueObject(request.preparationTime ?? 0),
     });
     this.activityRepository.saveActivities([activity]);
   }

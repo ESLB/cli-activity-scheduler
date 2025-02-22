@@ -1,16 +1,16 @@
-import { ItineraryActivityPrimitive } from '../../domain/entity/itinerary.entity';
+import { ItineraryActivityPrimitive2 } from '../../domain/entity/itinerary.entity';
 import { ActivityRepository } from '../../domain/repository/activity.repository';
 import { ScheduleRepository } from '../../domain/repository/schedule.repository';
-import { CreateItinerary } from '../../domain/service/createItinerary.service';
+import { CreateItinerary2 } from '../../domain/service/createItinerary2.service';
 
-export class GenerateItinerary {
+export class GenerateItinerary2 {
   constructor(
     private readonly scheduleRepository: ScheduleRepository,
     private readonly activityRepository: ActivityRepository,
-    private readonly createItinerary: CreateItinerary,
+    private readonly createItinerary: CreateItinerary2,
   ) {}
 
-  execute(startTimeHour?: number): ItineraryActivityPrimitive[] {
+  execute(startTimeHour?: number): ItineraryActivityPrimitive2[] {
     const schedule = this.scheduleRepository.get();
     const activities = this.activityRepository.getActivities({
       ids: schedule.activities,
