@@ -14,6 +14,9 @@ import { flushActivitiesCommand } from './schedule/flushActivities.command';
 import { getItineraryCommand } from './schedule/getItinerary.command';
 import { finishActivityCommand } from './schedule/finishActivity.command';
 import { addSpentTimeCommand } from './schedule/addSpentTime.command';
+import { setEnergyValuesCommand } from './energy/setEnergyValues.command';
+import { viewEnergyValuesCommand } from './energy/viewEnergyValues.command';
+import { spendEnergyCommand } from './energy/spendEnergy.command';
 
 export const commands = [
   clearCommand,
@@ -31,4 +34,7 @@ export const commands = [
   getItineraryCommand,
   finishActivityCommand,
   addSpentTimeCommand,
+  setEnergyValuesCommand,
+  viewEnergyValuesCommand,
+  spendEnergyCommand,
 ] satisfies CommandModule[];
