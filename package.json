@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start:dev": "nodemon --ignore 'data.json' --exec ts-node src/index.ts --"
+    "start:dev": "nodemon --ignore 'data.json' --exec ts-node src/index.ts --",
+    "test": "ts-node run-tests.ts",
+    "itinerary": "ts-node generate-itinerary.ts"
   },
   "keywords": [],
   "author": "",

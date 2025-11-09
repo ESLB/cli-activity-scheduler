@@ -16,6 +16,7 @@ export interface ActivityPrimitivies {
   doesNeedRestAfter: boolean;
   restTime: number;
   duration: number;
+  energyLevel: number; // 1-10
   totalTime?: number;
 }
 
@@ -26,6 +27,7 @@ export interface CreateActivityRequest {
   restTime?: Activity['restTime'];
   preparationTime?: Activity['preparationTime'];
   description?: Activity['description'];
+  energyLevel?: Activity['energyLevel'];
 }
 
 export class Activity {
@@ -40,6 +42,7 @@ export class Activity {
   public timeAlreadySpent: IntegerValueObject;
   public finished: BooleanValueObject;
   public predecessors: IdValueObject[];
+  public energyLevel: IntegerValueObject;
   get hasNoRemainingTime() {
     return this.timeAlreadySpent.value >= this.totalTime.value;
   }
@@ -62,6 +65,7 @@ export class Activity {
     restTime,
     preparationTime,
     description,
+    energyLevel,
   }: {
     name: StringValueObject;
     duration: IntegerValueObject;
@@ -74,6 +78,7 @@ export class Activity {
     preparationTime: IntegerValueObject;
     predecessors: IdValueObject[];
     description: StringValueObject;
+    energyLevel: IntegerValueObject;
   }) {
     this.id = id ?? uuidv4();
     this.name = name;
@@ -86,6 +91,7 @@ export class Activity {
     this.restTime = restTime;
     this.preparationTime = preparationTime;
     this.description = description;
+    this.energyLevel = energyLevel;
   }
 
   static create({
@@ -95,6 +101,7 @@ export class Activity {
     restTime,
     preparationTime,
     description,
+    energyLevel,
   }: CreateActivityRequest): Activity {
     return new Activity({
       name,
@@ -108,6 +115,7 @@ export class Activity {
       restTime: restTime ?? new IntegerValueObject(10),
       preparationTime: preparationTime ?? new IntegerValueObject(0),
       description: description ?? new StringValueObject(''),
+      energyLevel: energyLevel ?? new IntegerValueObject(5),
     });
   }
 
@@ -124,6 +132,7 @@ export class Activity {
       restTime: new IntegerValueObject(primitives.restTime),
       preparationTime: new IntegerValueObject(primitives.preparationTime),
       description: new StringValueObject(primitives.description),
+      energyLevel: new IntegerValueObject(primitives.energyLevel),
     });
   }
 
@@ -140,6 +149,7 @@ export class Activity {
       predecessors: this.predecessors.map((i) => i.value),
       preparationTime: this.preparationTime.value,
       restTime: this.restTime.value,
+      energyLevel: this.energyLevel.value,
       totalTime: this.totalTime.value,
     };
   }

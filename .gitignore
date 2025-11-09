@@ -2,5 +2,8 @@
 /dist
 eslint.config.js
 activities.json
+activities.md
+blocked-times.md
+EjemploItinerario.md
 schedule.json
 energyManagement.json

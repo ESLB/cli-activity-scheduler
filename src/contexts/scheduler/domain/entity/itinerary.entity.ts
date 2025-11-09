@@ -22,3 +22,15 @@ export interface ItineraryActivityPrimitive2 {
   rest: ActivityPartPrimitive;
   id: string;
 }
+
+export interface ItineraryBlockedTimePrimitive {
+  type: 'blocked';
+  name: string;
+  preBreak: ActivityPartPrimitive;
+  blockedTime: ActivityPartPrimitive;
+  postBreak: ActivityPartPrimitive;
+}
+
+export type ItineraryItemPrimitive =
+  | (ItineraryActivityPrimitive2 & { type: 'activity' })
+  | ItineraryBlockedTimePrimitive;

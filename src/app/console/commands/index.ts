@@ -17,6 +17,7 @@ import { addSpentTimeCommand } from './schedule/addSpentTime.command';
 import { setEnergyValuesCommand } from './energy/setEnergyValues.command';
 import { viewEnergyValuesCommand } from './energy/viewEnergyValues.command';
 import { spendEnergyCommand } from './energy/spendEnergy.command';
+import { newItineraryCommand } from './schedule/newItinerary.command';
 
 export const commands = [
   clearCommand,
@@ -37,4 +38,5 @@ export const commands = [
   setEnergyValuesCommand,
   viewEnergyValuesCommand,
   spendEnergyCommand,
+  newItineraryCommand,
 ] satisfies CommandModule[];
