@@ -85,13 +85,13 @@ export class MarkdownActivityParser {
       // Split by " - "
       const parts = withoutCheckbox.split(' - ');
 
-      if (parts.length < 3) {
+      if (parts.length < 2) {
         return {
           success: false,
           error: {
             lineNumber,
             message:
-              'Invalid format. Expected: - [ ] Topic: Title - Duration - E# - ...',
+              'Invalid format. Expected: - [ ] Topic: Title - Duration',
             rawLine: line,
           },
         };
@@ -220,14 +220,7 @@ export class MarkdownActivityParser {
       }
 
       if (energyLevel === undefined) {
-        return {
-          success: false,
-          error: {
-            lineNumber,
-            message: 'Energy level (E#) is required',
-            rawLine: line,
-          },
-        };
+        energyLevel = 1;
       }
 
       return {

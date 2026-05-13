@@ -128,7 +128,7 @@ const createItineraryService = new CreateItinerary2();
     `# Bad Schedule
 
 - [ ] Valid: Task - 30 - E5
-- [ ] Invalid: Missing Energy - 60
+- [ ] Missing Energy: Defaults to E1 - 60
 - [ ] Another: Valid Task - 45 - E7
 `,
   );
@@ -136,14 +136,14 @@ const createItineraryService = new CreateItinerary2();
   const parseResult = parser.parse();
   assert.strictEqual(
     parseResult.success,
-    false,
-    'Should fail with invalid line',
+    true,
+    'Should succeed since energy defaults to E1',
   );
 
-  if (!parseResult.success) {
-    assert.strictEqual(parseResult.errors.length, 1);
-    assert.strictEqual(parseResult.errors[0].lineNumber, 4);
-    console.log('✓ Test 3: Error handling in workflow - PASSED');
+  if (parseResult.success) {
+    assert.strictEqual(parseResult.activities.length, 3);
+    assert.strictEqual(parseResult.activities[1].energyLevel, 1, 'Missing energy should default to 1');
+    console.log('✓ Test 3: Missing energy defaults to E1 in workflow - PASSED');
   }
 
   fs.unlinkSync(testFile);

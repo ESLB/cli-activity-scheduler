@@ -171,7 +171,37 @@ export class CreateItinerary3 {
       }
     }
 
+    this.appendMissingBlocks(itinerary, blockedTimes, startItinerary.minutes.value);
+
     return itinerary;
+  }
+
+  private appendMissingBlocks(
+    itinerary: ItineraryItemPrimitive[],
+    blockedTimes: BlockedTime[],
+    startMinutes: number,
+  ): void {
+    const appearedNames = new Set(
+      itinerary
+        .filter((item): item is ItineraryBlockedTimePrimitive => item.type === 'blocked')
+        .map((item) => item.name),
+    );
+
+    const missing = blockedTimes
+      .filter((block) => !appearedNames.has(block.name))
+      .map((block) => ({ block, nextStart: this.getNextBlockStart(block, startMinutes) }))
+      .sort((a, b) => a.nextStart - b.nextStart);
+
+    for (const { block, nextStart } of missing) {
+      const displayStart = block.hasBreaks ? nextStart - BREAK_BEFORE_BLOCK : nextStart;
+      itinerary.push(this.createBlockedTimeItem(block, new Time(new IntegerValueObject(displayStart))));
+    }
+  }
+
+  private getNextBlockStart(block: BlockedTime, fromMinutes: number): number {
+    const dayStart = Math.floor(fromMinutes / 1440) * 1440;
+    const todayAbsoluteStart = dayStart + block.startTimeMinutes;
+    return todayAbsoluteStart >= fromMinutes ? todayAbsoluteStart : todayAbsoluteStart + 1440;
   }
 
   private processTimeSegment(
@@ -209,15 +239,24 @@ export class CreateItinerary3 {
           newTime: startTime.add(new IntegerValueObject(timeUntilBlock)),
         };
       } else {
-        // We're at the block, insert it
-        const blockedItem = this.createBlockedTimeItem(collision.block, startTime);
-        const blockDuration =
-          BREAK_BEFORE_BLOCK +
-          this.getBlockDuration(collision.block) +
-          BREAK_AFTER_BLOCK;
+        // We're already inside the block (or its pre-break) — use remaining time only
+        const breakBefore = collision.block.hasBreaks ? BREAK_BEFORE_BLOCK : 0;
+        const breakAfter = collision.block.hasBreaks ? BREAK_AFTER_BLOCK : 0;
+        const absoluteBlockStart = collision.startWithBreak + breakBefore;
+        const absoluteBlockEnd = absoluteBlockStart + this.getBlockDuration(collision.block);
+        const absoluteTotalEnd = absoluteBlockEnd + breakAfter;
+        const remainingTotal = absoluteTotalEnd - startTime.minutes.value;
+
+        const blockedItem = this.createBlockedTimeItemFromPosition(
+          collision.block,
+          startTime.minutes.value,
+          absoluteBlockStart,
+          absoluteBlockEnd,
+          absoluteTotalEnd,
+        );
         return {
           blockedTime: blockedItem,
-          newTime: startTime.add(new IntegerValueObject(blockDuration)),
+          newTime: startTime.add(new IntegerValueObject(remainingTotal)),
         };
       }
     }
@@ -232,36 +271,21 @@ export class CreateItinerary3 {
     endMinutes: number,
     blockedTimes: BlockedTime[],
   ): { block: BlockedTime; startWithBreak: number } | null {
-    // Normalize to 24-hour cycle
-    const normalizedStart = startMinutes % 1440;
-    const normalizedEnd = endMinutes % 1440;
+    const startDay = Math.floor(startMinutes / 1440);
+    const endDay = Math.floor(endMinutes / 1440);
 
     for (const block of blockedTimes) {
-      const blockStart = block.startTimeMinutes;
-      const blockEnd = block.endTimeMinutes;
-      const blockStartWithBreak = blockStart - BREAK_BEFORE_BLOCK;
+      const blockDuration = this.getBlockDuration(block);
 
-      // Check if block crosses midnight
-      const blockCrossesMidnight = blockEnd < blockStart;
-      const segmentCrossesMidnight = normalizedEnd < normalizedStart;
+      // Check the block occurrence on each day the segment touches
+      for (let day = startDay; day <= endDay; day++) {
+        const absoluteBlockStart = day * 1440 + block.startTimeMinutes;
+        const absoluteBlockEnd = absoluteBlockStart + blockDuration;
+        const breakOffset = block.hasBreaks ? BREAK_BEFORE_BLOCK : 0;
+        const absoluteBlockStartWithBreak = absoluteBlockStart - breakOffset;
 
-      if (blockCrossesMidnight) {
-        // Block crosses midnight (e.g., 21:00 - 06:00)
-        // Block occupies [blockStart, 1440) and [0, blockEnd)
-        if (
-          normalizedStart < blockEnd ||
-          normalizedStart >= blockStartWithBreak ||
-          (normalizedEnd > blockStartWithBreak && normalizedEnd <= 1440)
-        ) {
-          return { block, startWithBreak: blockStartWithBreak };
-        }
-      } else {
-        // Normal block doesn't cross midnight
-        if (
-          normalizedStart < blockEnd &&
-          normalizedEnd > blockStartWithBreak
-        ) {
-          return { block, startWithBreak: blockStartWithBreak };
+        if (startMinutes < absoluteBlockEnd && endMinutes > absoluteBlockStartWithBreak) {
+          return { block, startWithBreak: absoluteBlockStartWithBreak };
         }
       }
     }
@@ -282,19 +306,30 @@ export class CreateItinerary3 {
     block: BlockedTime,
     currentTime: Time,
   ): ItineraryBlockedTimePrimitive {
-    const preBreakStart = currentTime;
-    const preBreakEnd = currentTime.add(
-      new IntegerValueObject(BREAK_BEFORE_BLOCK),
-    );
-
-    const blockStart = preBreakEnd;
     const blockDuration = this.getBlockDuration(block);
-    const blockEnd = blockStart.add(new IntegerValueObject(blockDuration));
 
+    if (!block.hasBreaks) {
+      const blockEnd = currentTime.add(new IntegerValueObject(blockDuration));
+      return {
+        type: 'blocked',
+        name: block.name,
+        preBreak: { label: 'Pausa (Pre)', startTime: '', endTime: '', totalMinutes: 0 },
+        blockedTime: {
+          label: block.name,
+          startTime: currentTime.textual,
+          endTime: blockEnd.textual,
+          totalMinutes: blockDuration,
+        },
+        postBreak: { label: 'Pausa (Post)', startTime: '', endTime: '', totalMinutes: 0 },
+      };
+    }
+
+    const preBreakStart = currentTime;
+    const preBreakEnd = currentTime.add(new IntegerValueObject(BREAK_BEFORE_BLOCK));
+    const blockStart = preBreakEnd;
+    const blockEnd = blockStart.add(new IntegerValueObject(blockDuration));
     const postBreakStart = blockEnd;
-    const postBreakEnd = postBreakStart.add(
-      new IntegerValueObject(BREAK_AFTER_BLOCK),
-    );
+    const postBreakEnd = postBreakStart.add(new IntegerValueObject(BREAK_AFTER_BLOCK));
 
     return {
       type: 'blocked',
@@ -318,6 +353,38 @@ export class CreateItinerary3 {
         totalMinutes: BREAK_AFTER_BLOCK,
       },
     };
+  }
+
+  private createBlockedTimeItemFromPosition(
+    block: BlockedTime,
+    nowMinutes: number,
+    absoluteBlockStart: number,
+    absoluteBlockEnd: number,
+    absoluteTotalEnd: number,
+  ): ItineraryBlockedTimePrimitive {
+    const t = (m: number) => new Time(new IntegerValueObject(m)).textual;
+    const mkPart = (label: string, start: number, end: number): ActivityPartPrimitive => ({
+      label, startTime: t(start), endTime: t(end), totalMinutes: end - start,
+    });
+    const emptyPart = (label: string): ActivityPartPrimitive => ({
+      label, startTime: '', endTime: '', totalMinutes: 0,
+    });
+
+    const preBreak = nowMinutes < absoluteBlockStart
+      ? mkPart('Pausa (Pre)', nowMinutes, absoluteBlockStart)
+      : emptyPart('Pausa (Pre)');
+
+    const blockStart = Math.max(nowMinutes, absoluteBlockStart);
+    const blockedTime = blockStart < absoluteBlockEnd
+      ? mkPart(block.name, blockStart, absoluteBlockEnd)
+      : emptyPart(block.name);
+
+    const postBreakStart = Math.max(nowMinutes, absoluteBlockEnd);
+    const postBreak = block.hasBreaks && postBreakStart < absoluteTotalEnd
+      ? mkPart('Pausa (Post)', postBreakStart, absoluteTotalEnd)
+      : emptyPart('Pausa (Post)');
+
+    return { type: 'blocked', name: block.name, preBreak, blockedTime, postBreak };
   }
 
   private createSegment(

@@ -99,13 +99,12 @@ export const newItineraryCommand = {
     // Convert to Activity entities
     const activities = createActivitiesService.execute(parseResult.activities);
 
-    if (activities.length === 0) {
-      console.log('\n⚠️  No activities found in activities.md\n');
-      return;
-    }
-
     // Generate itinerary with blocked times
     const startTimeHour = argv.t as number | undefined;
+    const startMinutes = startTimeHour !== undefined
+      ? Math.round(startTimeHour * 60)
+      : new Date().getHours() * 60 + new Date().getMinutes();
+
     const itinerary = createItineraryService.execute(
       activities,
       blockedTimeResult.blockedTimes,
@@ -113,7 +112,7 @@ export const newItineraryCommand = {
     );
 
     // Print itinerary
-    printItineraryWithBlocks(itinerary);
+    printItineraryWithBlocks(itinerary, startMinutes);
 
     // Calculate and print energy summary
     const totalEnergySpent = calculateEnergyConsumption(activities);

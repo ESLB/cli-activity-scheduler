@@ -52,7 +52,7 @@ console.log('Running Parser Tests...\n');
   fs.unlinkSync(testFile);
 }
 
-// Test 2: Missing energy level (should fail)
+// Test 2: Missing energy level (should default to E1)
 {
   const testFile = path.join(process.cwd(), 'test-no-energy.md');
   fs.writeFileSync(
@@ -64,12 +64,11 @@ console.log('Running Parser Tests...\n');
   const parser = new MarkdownActivityParser('test-no-energy.md');
   const result = parser.parse();
 
-  assert.strictEqual(result.success, false, 'Should fail without energy level');
-  if (!result.success) {
-    assert.strictEqual(result.errors.length, 1);
-    assert.strictEqual(result.errors[0].lineNumber, 1);
-    assert.ok(result.errors[0].message.includes('Energy level'), 'Error should mention energy level');
-    console.log('✓ Test 2: Missing energy level - PASSED');
+  assert.strictEqual(result.success, true, 'Should succeed without energy level');
+  if (result.success) {
+    assert.strictEqual(result.activities[0].energyLevel, 1, 'Energy level should default to 1');
+    assert.strictEqual(result.activities[0].description, 'Description');
+    console.log('✓ Test 2: Missing energy level defaults to E1 - PASSED');
   }
 
   fs.unlinkSync(testFile);

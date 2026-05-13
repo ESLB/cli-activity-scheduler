@@ -2,6 +2,7 @@ export interface BlockedTime {
   name: string;
   startTimeMinutes: number; // Minutes from midnight (0-1439)
   endTimeMinutes: number; // Minutes from midnight (0-1439), can be < startTime if crosses midnight
+  hasBreaks: boolean; // Whether to add pre/post transition time around this block
 }
 
 export interface ParsedBlockedTimeLine {
